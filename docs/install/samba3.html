@@ -1,0 +1,99 @@
+<html>
+<head>
+  
+  <title>Directory Manager 2.0 Documentation: Samba 3 Server Configuration</title>
+  <link href="../style.css" rel="stylesheet" type="text/css"></link>
+</head>
+<body>
+  <p> 
+	Navigation:
+	<a href="../" name="top">Top</a> | <a href="./">Up</a> | <a href="Javascript:history.go(-1)">Back</a>
+  </p>
+
+  <p align="center" style="font-size: 20px; font-weight: bold">Directory Manager 2.0 Documentation: Samba 3 Server Configuration</p>
+  
+	<p>This section assumes you are using Samba 3 for your Samba server, AS A DOMAIN CONTROLLER. Samba 2.2.x configuration may differ. If using Samba 2.2.x or Samba 3.x as a Domain Member, please see documentation via <a href="http://www.samba.org/">http://www.samba.org/</a> for details.
+
+	<p>NOTE: Samba 3 MUST be compiled with LDAP support in order to work. If you are not sure, running the following command (assuming 'smbd' resides in /usr/sbin) should reference 'libldap' and 'liblber' IF LDAP support is compiled in. Otherwise, you will need to download (and possibly compile) Samba 3 with LDAP support:
+
+	<div align="left" style="background-color: #CCCCCC; font-family: monospace; white-space: pre">
+ldd /usr/sbin/smbd
+	</div>
+	</p>
+
+	<p>This section assumes you already have an operating Samba server and a functional smb.conf file. For this example, smb.conf will reside in /etc/samba.</p>
+
+	<ol>
+	<li style=''>Add the following to the 'global' section of smb.conf:
+
+	<div align="left" style="background-color: #CCCCCC; font-family: monospace; white-space: pre">
+passdb backend = ldapsam:ldap://192.168.1.110 # Server Host/IP of OpenLDAP (Must match SSL certificate, if any)
+username map = /etc/samba/users.map # Where 'administrator' maps to 'root' on UNIX
+ldap admin dn = cn=manager,dc=malysoft,dc=com # Set to whatever resides in slapd.conf
+ldap group suffix = ou=Groups
+ldap machine suffix = ou=Machines
+ldap passwd sync = Yes
+# Required if you want Samba to modify your UNIX password from Windows
+ldap suffix = dc=malysoft,dc=com # Your specific base dn here...
+ldap ssl = yes # Include if using SSL, set to 'no' otherwise
+ldap user suffix = ou=People
+	</div>
+
+	<p>
+	  If you wish to use Samba as a Domain Controller, add the following to smb.conf. The 'add machine script' must be copied onto the Samba server as well as all prerequisite libraries met (Net::LDAP, Net::SSL, etc):
+	</p>
+
+	<div align="left" style="background-color: #CCCCCC; font-family: monospace; white-space: pre">
+workgroup = MALY 
+# The Domain name, to your liking
+domain logons = Yes
+logon script = logon.bat 
+# Or to your liking, wherever you have the 'netlogon' share residing
+add machine script = /var/www/DirectoryManager/bin/addmachine.pl %u
+# Wherever script is located, may differ
+	</div>
+
+	<p>As a Domain Controller, you must then modify the settings in 'addmachine.pl' to suit your specific needs.
+	</p>
+
+	<p>NOTE: If you receive errors adding machines to domains (such as 'No such user', etc...) PLEASE check your log.smbd file for any details.</p>
+	</li>
+
+	<li style=''>
+	Provide your 'root dn' password to Samba (for it's internal use), by running the following command (as root):
+
+	<div align="left" style="background-color: #CCCCCC; font-family: monospace; white-space: pre">
+smbpasswd -w &lt;PASSWORD&gt;
+	</div>
+	</li>
+
+	<li style=''>
+	Retrieve the Samba server's SID, and add the Domain Administrator account ('root') to the LDAP server by running (as root):
+
+	<div align="left" style="background-color: #CCCCCC; font-family: monospace; white-space: pre">
+net getlocalsid
+# Will mention SERVERSID required for below.
+<p style='text-indent: 0px'>pdbedit -r -U SERVERSID-500 -G SERVERSID-512 root</p>
+
+	</div>
+
+	<p>If this step is NOT done, then the 'administrator' or 'root' account will not have any special permissions on Windows PC's in the domain, but rather act like an unprivileged user.
+	</p>
+	</li>
+
+	<li style=''>
+	Restart Samba:
+
+	<div align="left" style="background-color: #CCCCCC; font-family: monospace; white-space: pre">
+killall -HUP smbd # Command WILL vary
+killall -HUP nmbd # Command WILL vary
+	</div>
+	</li>
+
+	</ol>
+
+	</p>
+
+  <p align="center">Copyright &copy; 2004-2005 <a href="http://www.malysoft.com/">Maly Soft</a></p>
+</body>
+</html>

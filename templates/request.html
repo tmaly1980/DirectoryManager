@@ -1,0 +1,65 @@
+<maly-if var="FORM{SORT}" defined=1>
+  <maly-set var="SORT" from="FORM{SORT}"/>
+<maly-else/>
+  <maly-set var="SORT" value="#COLUMNS[0]#"/>
+</maly-if>
+
+
+<maly-if var="FORM{DESC}">
+  <maly-set var="DESC{#SORT#}" value=""/>
+  <maly-set var="REVERSE" value=1/>
+<maly-else/>
+  <maly-set var="DESC{#SORT#}" value=1/>
+  <maly-set var="REVERSE" value=""/>
+</maly-if>
+
+<maly-set var="CONTENT">
+        <tr>
+           <td class="results">
+
+              <table class="results" border="0" cellspacing="0" cellpadding="5" align=center>
+
+              <tr>
+                <td class="traverse" colspan="#SCALAR:COLUMNS#" align="left">
+                  (#NUM:COUNT# Requests)
+                </td>
+              </tr>
+              <maly-if var=REQUESTS>
+              <tr>
+                <maly-loop name="ATTR" var="COLUMNS">
+                  <td class="header Request_#PATH_INFO{CLASS}#_#ATTR#_header" align=center valign=top>
+                    <span style="font-weight: bold">
+                      #HEADER{#ATTR#}#
+                    </span>
+                  </td>
+                </maly-loop>
+              </tr>
+              <maly-loop var=REQUESTS hash=1 sort="#VALUE{#COLUMNS[0]#}#">
+	      <maly-set var="ENTRY" from="VALUE"/>
+              <maly-set var="RESULT_CLASS" eval=1 value="#MALYITER# % 2 == 0 ? 'data1' : 'data2'"/>
+              <tr>
+                <maly-loop name="ATTR" var="COLUMNS">
+		  <maly-set var="COLUMN_INDEX" from="MALYITER"/>
+                  <td class="#RESULT_CLASS# Request_#PATH_INFO{CLASS}#_#ATTR#" align=center>
+                    <maly-load file="#CUSTOM_DIR#/#ATTR#">
+		      <maly-loop name=VALUE var="ENTRY{#ATTR#}">
+		        <maly-if eval="('#LINK_COL#' eq '' and '#COLUMN_INDEX#' eq '0') or '#LINK_COL#' eq '#ATTR#'">
+		          <a href="cgi-bin/Add.pl/#PATH_INFO{TREE}#/#PATH_INFO{CLASS}#?filename=#KEY#&action=Load">#VALUE#</a>
+			<maly-else/>
+		          #VALUE#
+			<br>
+			</maly-if>
+		      </maly-loop>
+                    </maly-load>
+                  </td>
+                </maly-loop>
+              </tr>
+              </maly-loop>
+
+              </maly-if>
+            </table>
+          </td>
+        </tr>
+</maly-set>
+
+#include main

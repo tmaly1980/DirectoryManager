@@ -1,0 +1,25 @@
+  set_field('template', '#FORM{TEMPLATE}#', 'Default');
+  set_field('global_template', '#ENTRY{GLOBAL_TEMPLATE}#');
+
+<maly-if var="MODE" eq="Add">
+  <maly-loop hash=1 var="DEFAULT">
+    set_field('#KEY#', "#VALUE#");
+  </maly-loop>
+</maly-if>
+<maly-loop name="SECTION_NAME" var="ENABLED_SECTIONS">
+  <maly-set var="SECTION" from="SECTIONS{ABBREV=#SECTION_NAME#}"/>
+  <maly-loop var="SECTION{COLUMNS}" name="ATTR">
+  <maly-if var="CLASSCONF{MULTIPLE}{#ATTR#}">
+    set_field(new Array('#ATTR#', '#ATTR#_text'), "#VALUE_OR_DEFAULT{#ATTR#}#");
+  </maly-if>
+  </maly-loop>
+</maly-loop>
+
+<maly-if eval="'#HAS_ADMIN_ACCESS#' and '#ENTRY_TYPES#'">
+  set_field('entry_type', '#ENTRY{ENTRY_TYPE}#', '#CONFIG{MODULES}{#PATH_INFO{CLASS}#}{DEFAULT_ENTRY_TYPE}#');
+  // Hide sections not meant to be shown....when admin
+  updateSectionsForEntryType('entry_type');
+</maly-if>
+
+<maly-load file="#CUSTOM_DIR#/onLoad.html"/>
+

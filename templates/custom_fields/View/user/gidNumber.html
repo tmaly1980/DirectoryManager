@@ -1,0 +1,10 @@
+<maly-if var="ENTRY{GROUP}{CN}">
+  <a href="#ENTRY{GROUP}{VIEW_URL}#" target="_new">
+    #ENTRY{GROUP}{CN}#
+  </a>
+  (##ENTRY{GIDNUMBER}#)
+<maly-elsif var="ENTRY{GIDNUMBER}"/>
+  <a target="_new" href="cgi-bin/View.pl/#PATH_INFO{TREE}#/group/gidNumber=#ENTRY{GIDNUMBER}#&popup=1">
+  ##ENTRY{GIDNUMBER}#
+  </a>
+</maly-if>

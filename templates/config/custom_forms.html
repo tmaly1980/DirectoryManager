@@ -1,0 +1,69 @@
+  <table border=0 cellpadding=1 cellspacing=0 width="100%" style="padding-top: 20px">
+    <tr>
+      <th colspan=1 align=left style="font-size: 16px">
+        Customizable Forms
+      <a href="Javascript:void(0)" onClick="helpPopup('config/modules_customform.html');">(HELP)</a>
+      </th>
+      <th align=right>
+        &nbsp;
+        <maly-if var="TREE" ne="_GLOBAL"><input type=checkbox name="INHERIT_MULTIPLE" value=1> Inherit</maly-if>
+      </th>
+    </tr>
+
+    <tr>
+      <td align=left style="border-width: 1px 0px 1px 0px; border-style: solid">
+        <table class="borderless" width="100%">
+	  <tr>
+	    <td align=center width="40%">
+	      Form Field:
+	    </td>
+	    <td align=center>
+	      &nbsp;
+	    </td>
+	    <td align=center width="45%">
+	      Field Values:
+	    </td>
+	  </tr>
+
+	  <tr>
+	    <td align=left valign=middle>
+	      <select style="width: 100%" multiple=multiple size=6 name="MULTIPLE" id="MULTIPLE" onChange="dualMultiList_edit('MULTIPLE', 'CHOICES');">
+	        <maly-loop var="CONF{MODULES}{#MODULE#}{MULTIPLE}" hash=1>
+		  <option value="#KEY#|#LIST_COLON:VALUE#">#KEY#</option>
+		</maly-loop>
+	      </select>
+	    </td>
+	    <td style="vertical-align: middle" align=center valign=middle>
+	      <a href="javascript:void(0)" onClick="dualMultiList_save('MULTIPLE', 'CHOICES'); loseInherit('MULTIPLE');">
+	        &lt;= Save
+	      </a>
+	    </td>
+	    <td align=left valign=middle>
+	      <select style="width: 100%" multiple=multiple size=6 name="CHOICES" id="CHOICES" onChange="multiList_edit(this);">
+	      </select>
+	    </td>
+	    <td style="vertical-align: middle">
+	      <a href="Javascript:void(0)" onClick="multiList_up('CHOICES', null, 1); loseInherit('MULTIPLE');">Up</a><br>
+	      <a href="Javascript:void(0)" onClick="multiList_down('CHOICES', null, 1); loseInherit('MULTIPLE');">Down</a><br>
+	    </td>
+	  </tr>
+	  <tr>
+	    <td align=left>
+	      <a href="Javascript:void(0)" onClick="multiList_prompt_add('MULTIPLE', 'Enter in an attribute:'); loseInherit('MULTIPLE');">Add</a> |
+	      <a href="Javascript:void(0)" onClick="multiList_remove('MULTIPLE'); loseInherit('MULTIPLE');">Remove</a>
+	    </td>
+	    <td align=left>
+	      &nbsp;
+	    </td>
+	    <td align=left>
+	      <a href="Javascript:void(0)" onClick="multiList_prompt_add('CHOICES','Enter in a possible value:');">Add</a> |
+	      <a href="Javascript:void(0)" onClick="multiList_remove('CHOICES');">Remove</a>
+	    </td>
+
+	  </tr>
+
+	</table>
+      </td>
+    </tr>
+
+  </table>

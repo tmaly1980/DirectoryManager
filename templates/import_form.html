@@ -1,0 +1,150 @@
+<maly-set var="CUSTOM_SCRIPT">
+function updateColumns(format, msel)
+{
+  var form = format.form;
+  var format_string = get_field_value(format);
+  var cols = format_string.split(':');
+  cols.shift(); // Get rid of abbreviation!
+  msel = get_field(msel);
+  clear_select(msel);
+  if (format_string == '' || format_string == 'otherfile' || format_string == 'otherbelow' || format_string == 'ldif') { return; }
+  for (var i = 0; i < cols.length; i++)
+  {
+    msel.options[i] = new Option(cols[i], cols[i]);
+  }
+}
+function formSubmit(f)
+{
+  selectSubmit('cols');
+  return true;
+}
+</maly-set>
+<maly-set var="CUSTOM_ONLOAD">
+updateColumns('format', 'cols');
+</maly-set>
+<maly-set var="CONTENT">
+        <tr>
+          <td class="results">
+	    <form action="#PATHINFO_URL#" method=POST enctype="multipart/form-data" onSubmit="return formSubmit(this);">
+            <table class="results" border="0" cellspacing="0" cellpadding="5" align=center>
+	      <tr>
+	        <td valign=top>File Format:</td>
+		<td valign=top>
+		  <select onChange="updateColumns(this, 'cols');" name="format" id='format'>
+		    <option value="">[Please Select]</option>
+		    <maly-loop var="CLASSREF{IMPORT_FORMATS}" name="FORMAT">
+		      <maly-if var="FORMAT{COLS_IF}">
+		        <maly-loop hash=1 var="FORMAT{COLS_IF}">
+			  <maly-if eval="#KEY#">
+		            <option value="#FORMAT{ABBREV}#:#LIST_COLON:VALUE#">#FORMAT{NAME}#</option>
+			  </maly-if>
+		        </maly-loop>
+		      <maly-else/>
+		      <option value="#FORMAT{ABBREV}#:#LIST_COLON:FORMAT{COLS}#">#FORMAT{NAME}#</option>
+		      </maly-if>
+		    </maly-loop>
+		    <option value="otherfile">Other (columns in first row of file)</option>
+		    <option value="otherbelow">Other (columns below)</option>
+		    <option value="ldif">Raw LDIF</option>
+		  </select>
+		</td>
+	      </tr>
+
+	      <tr>
+	        <td valign=top>Columns (in order):</td>
+		<td valign=top width="225">
+		  <select multiple=multiple style="width: 200px; height: 100px" name="cols" id="cols">
+		  </select>
+		</td>
+		<td valign=middle align=left>
+		  <a href="Javascript:void(0)" onClick="multiList_up('cols', null, 1)">Up</a>
+		  <br>
+		  <a href="Javascript:void(0)" onClick="multiList_down('cols', null, 1)">Down</a>
+		</td>
+	      </tr>
+	      <tr>
+	        <td valign=top>&nbsp;</td>
+		<td colspan=2 valign=top align=left>
+		  <a href="Javascript:void(0)" onClick="multiList_prompt_add('cols', 'Enter in an attribute:')">Add</a> |
+		  <a href="Javascript:void(0)" onClick="multiList_remove('cols')">Remove</a>
+		  <br>
+		  * To ignore a column, enter in 'x' for it's name.<br>
+		  * To duplicate a column into several attributes/fields, separate the field names by a comma.
+		</td>
+	      </tr>
+
+	      <tr>
+	        <td valign=top>Delimiter:</td>
+		<td colspan=2>
+		  <input type=text name="delim" id="delim" value=":" size=3 maxlength=2>
+		  (Note: \t = tab)
+		</td>
+	      </tr>
+
+	      <maly-if var="CLASSREF{ENTRY_TYPES}">
+	      <tr>
+	        <td valign=top>Entry Type:</td>
+		<td colspan=2>
+		  <select name="entry_type">
+		    <maly-loop var="CLASSREF{ENTRY_TYPES}" hash=1>
+		      <option value="#KEY#">#VALUE{NAME}#</option>
+		    </maly-loop>
+		  </select>
+		</td>
+
+	      </tr>
+	      </maly-if>
+
+	      <tr>
+	        <td valign=top>Mode:</td>
+		<td colspan=2>
+		  <select name="changemode">
+		    <option value="add">Add (New Entries Only, Error on Existing)</option>
+		    <option value="modify">Modify (Existing Entries Only, Error on New)</option>
+		  </select>
+		</td>
+	      </tr>
+
+	      <tr>
+	        <td valign=top>On Errors:</td>
+		<td colspan=2>
+		  <input type=radio name="onerror" value="stop" checked=checked> Stop after first error
+		  <input type=radio name="onerror" value="continue"> Continue on errors
+		</td>
+	      </tr>
+
+	      <tr>
+	        <td valign=top>Filter (optional):</td>
+		<td colspan=2>
+		  <input type=text name="filter" id='filter' size=50><br>
+		  in the form: <span style="font-weight: bold">'\\#attribute\\#' op VALUE [&amp;&amp; ...]</span><br>i.e. <span style="font-weight: bold">'\\#uidNumber\\#' &gt; 500</span>
+		</td>
+	      </tr>
+
+
+	      <tr>
+	        <td valign=top>File:</td>
+		<td colspan=2>
+		  <input type=file name=content>
+		</td>
+	      </tr>
+
+	      <tr>
+	        <td>
+		  <input type=submit name=action value="Preview">
+		</td>
+	        <td colspan=2 align=right>
+		  <input type=submit name=action value="Generate LDIF">
+		  <input type=submit name=action value="Import">
+		</td>
+
+	      </tr>
+
+
+            </table>
+	    </form>
+          </td>
+        </tr>
+</maly-set>
+
+#include main

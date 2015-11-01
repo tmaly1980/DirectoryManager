@@ -1,0 +1,19 @@
+<maly-set var="CUSTOM_DIR" from="CUSTOM_DIR_VIEW"/>
+		<maly-load file="#CUSTOM_DIR#/#ATTR#,#CUSTOM_GLOBAL_OC_DIR#/#ATTR#,#CUSTOM_GLOBAL_DIR#/#ATTR#">
+		  <maly-if eval="'#CONFIG{IMPLICIT_LINK}#' ne '1' and '#LINKS{#ATTR#}#'">
+#include view_cross
+		  <maly-elsif eval="'#CONFIG{IMPLICIT_LINK}#' eq '1' and '#LINKS{#ATTR#}#'"/>
+#include view_cross_inline
+		  <maly-else/>
+
+		    <maly-if var="ATTR" in="NOVIEW" not=1>
+		    <maly-if var="ATTR" in="MULTIPLE">
+		      <maly-loop var="ENTRY{#ATTR#}" name="VALUE">
+		        #VALUE#<br>
+		      </maly-loop>
+		    <maly-else/>
+		      #ENTRY{#ATTR#}#
+		    </maly-if>
+		    </maly-if>
+		  </maly-if>
+		</maly-load>

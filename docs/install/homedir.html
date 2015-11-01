@@ -1,0 +1,99 @@
+<html>
+<head>
+  
+  <title>Directory Manager 2.0 Documentation: Home Directory Server</title>
+  <link href="../style.css" rel="stylesheet" type="text/css"></link>
+</head>
+<body>
+  <p> 
+	Navigation:
+	<a href="../" name="top">Top</a> | <a href="./">Up</a> | <a href="Javascript:history.go(-1)">Back</a>
+  </p>
+
+  <p align="center" style="font-size: 20px; font-weight: bold">Directory Manager 2.0 Documentation: Home Directory Server</p>
+  
+	<p>Directory Manager comes with an RPC Daemon that handles the creation of home directories. When a user is added to the Directory Manager system, you have the option to create a home directory for them automatically. You may also create a home directory for existing users at any time. </p>
+	
+	<p>This is done in a client/server fashion, where the CGI contacts the RPC Daemon (on the Home Directory Server) to create the home directory. The RPC Daemon is a service that runs on a given port, and may be run from inetd/xinetd. Depending on the size of your network, this may need to be installed on a separate physical server than your Directory Manager web server. If they are the same server, skip steps 1 and 2.</p>
+
+	<p>If you wish to use the automatic home directory creation tool, but do not use a supported file server system (i.e. Linux with Perl), you can write your own CGI on the required platform to faciliate such, using HTTPS-based communications. See <a href="integration/homedirapi.html">Home Directory Creation API</a> for further details.  </p>
+
+	<ol>
+	<li style=''>On the Home Directory Server, follow basic unpacking directions, in the 'Unpacking Directory Manager' section.</li>
+	<li style=''>Follow module installation instructions, in the 'Prerequisite Perl Modules' section. MAKE SURE to say 'yes' to the question regarding your server being the home directory server.</li>
+
+	<li style=''>Open the bin/homedird.pl script in a text editor to modify the settings near the top. You will probably want to modify the password, the SSL settings, and possibly the command to run (check with your System Administrator).
+	<div align="left" style="background-color: #CCCCCC; font-family: monospace; white-space: pre">
+my $port = "3890";
+my $USER = "admin";
+my $USE_SSL = 1;
+my $CERT_FILE = "/etc/openldap/server.cert"; # REQUIRED IF USE_SSL=1
+my $KEY_FILE = "/etc/openldap/server.key"; # REQUIRED IF USE_SSL=1
+my $CA_FILE = ""; # OPTIONAL
+my $PASS = "r3w7"; # PASSWORD, required.
+my @commands = (
+  "cp -R /etc/skel /home/%u",
+  "chown -R %u:%g /home/%u",
+);
+	</div>
+	</li>
+
+	<li style=''>If enabling SSL, you will need to provide an SSL certificate and private key. To create a self-signed certificate yourself, you can run the following commands (MAKE SURE to put the proper hostname that the daemon will be running on in the 'Common Name' field):
+	<div align="left" style="background-color: #CCCCCC; font-family: monospace; white-space: pre">
+openssl req -new -x509 -nodes \
+  -keyout /var/www/DirectoryManager/etc/server.key \
+  -out /var/www/DirectoryManager/etc/server.cert -days 3650
+chmod go-rwx /var/www/DirectoryManager/etc/server.key
+	</div>
+
+	<p>You also have the option to reference an existing certificate and private key, elsewhere on your system.
+	</p></li>
+
+	<li style=''>MAKE SURE you secure the permissions of this script, as it contains a password to allow access in plain-text:
+	<div align="left" style="background-color: #CCCCCC; font-family: monospace; white-space: pre">
+chown root.root /var/www/DirectoryManager/bin/homedird.pl
+chmod 0700 /var/www/DirectoryManager/bin/homedird.pl
+	</div>
+	</li>
+
+	<li style=''>You will want to add the following to /etc/services (the exact port depends on your settings in homedird.pl):
+	<div align="left" style="background-color: #CCCCCC; font-family: monospace; white-space: pre">
+dmhomedir	3890/tcp	# Directory Manager Home Directory Creation Daemon
+	</div>
+	</li>
+
+	<li style=''>If running as a standalone service, simply add to your system init files (/etc/rc.d, /etc/init.d, or other depending on your system) the following command:
+	<div align="left" style="background-color: #CCCCCC; font-family: monospace; white-space: pre">
+/var/www/DirectoryManager/bin/homedird.pl
+	</div>
+	</li>
+
+	<li style=''>If running from /etc/inetd.conf, add the following line at the end (make sure to restart inetd afterwards):
+	<div align="left" style="background-color: #CCCCCC; font-family: monospace; white-space: pre">
+dmhomedir	stream  tcp	nowait  root	/usr/sbin/tcpd  /var/www/DirectoryManager/bin/homedird.pl -x
+	</div>
+	</li>
+
+	<li style=''>If running from xinetd, create a file /etc/xinetd.d/dmhomedir.conf, with the following contents (make sure to restart xinetd afterwards):
+	<div align="left" style="background-color: #CCCCCC; font-family: monospace; white-space: pre">
+service dmhomedir
+{
+	socket_type	= stream
+	wait	= no
+	user	= root
+	server	= /var/www/DirectoryManager/bin/homedird.pl
+ 	server_args		= -x
+	disable	= no
+}
+	</div>
+	</li>
+
+	<li style=''>You will want to run the 'homedird.pl' script by hand to ensure that the daemon will properly work. Remember to pass the '-x' argument if necessary. You should be able to Ctrl-C to get back to the prompt. An error message saying 'Cannot listen to port X' probably means that the port is already being listened on (by homedird.pl, inetd or xinetd).
+	</li>
+
+	</ol>
+  
+
+  <p align="center">Copyright &copy; 2004-2005 <a href="http://www.malysoft.com/">Maly Soft</a></p>
+</body>
+</html>

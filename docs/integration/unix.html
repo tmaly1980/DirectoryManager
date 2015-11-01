@@ -1,0 +1,73 @@
+<html>
+<head>
+  
+  <title>Directory Manager 2.0 Documentation: UNIX Integration</title>
+  <link href="../style.css" rel="stylesheet" type="text/css"></link>
+</head>
+<body>
+  <p> 
+	Navigation:
+	<a href="../" name="top">Top</a> | <a href="./">Up</a> | <a href="Javascript:history.go(-1)">Back</a>
+  </p>
+
+  <p align="center" style="font-size: 20px; font-weight: bold">Directory Manager 2.0 Documentation: UNIX Integration</p>
+  
+	<p>To properly integrate your UNIX environment with OpenLDAP -- providing user lookups and authentication/access for LDAP users -- you must install and configure LDAP-capable NSS and PAM modules. In most cases, this will involve installing the 'nss-ldap' and 'pam-ldap' packages provided by your UNIX distribution, but may involve downloading from <a href="http://www.padl.com/">http://www.padl.com/</a> and installing from source. </p>
+
+	<p>In this example, it is assumed that the PADL versions of nss-ldap and pam-ldap are used (and already installed), the UNIX server is Linux, and the LDAP client configuration file resides as /etc/ldap.conf . There are also graphical/menu oriented tools to set this up, depending on your exact UNIX/Linux distribution. For this example, we assume you will modify the files by text editor.</p>
+
+	<ol>
+	<li style=''>Modify your /etc/ldap.conf to reflect your client connection (items in UPPERCASE are to be replaced with your respective settings):
+
+	<div align="left" style="background-color: #CCCCCC; font-family: monospace; white-space: pre">
+host LDAPHOST
+base BASEDN
+ldap_version 3
+ssl start_tls # Use this if using Start TLS (Recommended)
+ssl on # Use this if using regular SSL
+pam_password sha
+	</div>
+	</li>
+
+	<li style=''>Modify your /etc/nsswitch.conf to query LDAP after local files:
+	<div align="left" style="background-color: #CCCCCC; font-family: monospace; white-space: pre">
+passwd:	files ldap
+group:	files ldap
+shadow:	files ldap
+	</div></li>
+
+	<li style=''>Modify your PAM configuration file (may be a central file, or may need to be modified for every service to use LDAP) to include:
+	<div align="left" style="background-color: #CCCCCC; font-family: monospace; white-space: pre">
+auth	required	/lib/security/$ISA/pam_env.so
+auth	sufficient	/lib/security/$ISA/pam_unix.so likeauth nullok
+auth	sufficient	/lib/security/$ISA/pam_ldap.so use_first_pass
+auth	required	/lib/security/$ISA/pam_deny.so
+	
+account	sufficient	/lib/security/$ISA/pam_ldap.so
+account	required	/lib/security/$ISA/pam_unix.so
+	
+password	required	/lib/security/$ISA/pam_cracklib.so retry=3 type=
+password	sufficient	/lib/security/$ISA/pam_unix.so nullok use_authtok md5
+shadow
+password	sufficient	/lib/security/$ISA/pam_ldap.so use_authtok
+password	required	/lib/security/$ISA/pam_deny.so
+	
+session	required	/lib/security/$ISA/pam_limits.so
+session	required	/lib/security/$ISA/pam_unix.so
+session	optional	/lib/security/$ISA/pam_ldap.so
+	</div>
+
+	<p>Note: some graphical tools set PAM up incorrectly, where if the LDAP server is not available, logging on as local users will cause excessive delays. Please consult your distribution's PAM configuration for details.</p>
+
+	</li>
+
+	<li style=''>It is recommended to use the 'nscd' tool (Name Service Caching Daemon), if available (part of LibC). Check your init directory for such startup script. This tool caches queries so that positive queries (ie users that were found in LDAP) will not be queried every time a lookup is needed (which CAN be expensive when doing an 'ls -lR' on a person's home directory!). It will be cached for a period of time. However, negative queries (i.e. users NOT found) will ALSO cache. This means that if your LDAP server is down or your LDAP client integration is misconfigured, you will need to ALSO restart 'ncsd' after the problem is fixed.</li>
+	</ol>
+
+	<p>You can then perform a simple check of the functionality by running the 'id' command-line tool to look up a user that is in LDAP but not /etc/passwd.</p>
+
+	
+
+  <p align="center">Copyright &copy; 2004-2005 <a href="http://www.malysoft.com/">Maly Soft</a></p>
+</body>
+</html>

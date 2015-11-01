@@ -1,0 +1,22 @@
+<html>
+<head>
+  
+  <title>Directory Manager 2.0 Documentation: Generate Access Control File</title>
+  <link href="../style.css" rel="stylesheet" type="text/css"></link>
+</head>
+<body>
+  <p> 
+	Navigation:
+	<a href="../" name="top">Top</a> | <a href="./">Up</a> | <a href="Javascript:history.go(-1)">Back</a>
+  </p>
+
+  <p align="center" style="font-size: 20px; font-weight: bold">Directory Manager 2.0 Documentation: Generate Access Control File</p>
+  
+	  This generates the DMACL.conf file, which states the groups that have access to each directory tree. It must be (re)distributed each time a new directory tree is added, profiles are added/deleted, or groups are modified within a profile, to each directory server you wish to manage. Save the file in the configuration directory (i.e. /usr/local/openldap/etc/openldap or other) and have the slapd.conf file include it (i.e. add 'include DMACL.conf' to slapd.conf AFTER all other access control options). The LDAP servers then need to be restarted.
+
+		<span class="important">Note: Adding new profiles or trees WILL require regenerating and redistributing the DMACL.conf file, but modifying members of existing groups will not.</span>
+	  
+
+  <p align="center">Copyright &copy; 2004-2005 <a href="http://www.malysoft.com/">Maly Soft</a></p>
+</body>
+</html>

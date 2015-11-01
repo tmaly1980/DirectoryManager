@@ -1,0 +1,20 @@
+<table border=0 class="borderless">
+<tr>
+  <td class="#DATA_CLASS# borderless">Load:</td>
+  <td class="#DATA_CLASS# borderless">
+    <input type=file name=#ATTR#_file>
+  </td>
+</tr>
+
+<maly-if var="ENTRY{#ATTR#}">
+<tr>
+  <td class="#DATA_CLASS# borderless">Remove:</td>
+  <td class="#DATA_CLASS# borderless"><input type=checkbox name="#ATTR#_delete"></td>
+</tr>
+<tr>
+  <td class="#DATA_CLASS# borderless" colspan=2>
+    <img src="#ENTRY{PHOTO_URL}#">
+  </td>
+</tr>
+</maly-if>
+</table>

@@ -1,0 +1,23 @@
+<maly-if var="ENTRY{MANAGER_META}">
+<maly-loop name=MGR var="ENTRY{MANAGER_META}">
+  <maly-if var="MGR{UID}">
+    <a href="Javascript:void(0)" onClick="cross_reference_view('#MGR{DN}#', '#PATH_INFO{TREE}#', 'user');">
+      #MGR{CN}#
+    </a>
+  <maly-else/>
+  #MGR{DN}#
+  </maly-if>
+  <br>
+</maly-loop>
+<maly-else/>
+  <maly-loop name=MGR var="ENTRY{MANAGER}">
+    <maly-if eval="'#MGR#' =~ /,#CONFIG{TREES}{#PATH_INFO{TREE}#}{BASEDN}#$/">
+      <a href="Javascript:void(0)" onClick="cross_reference_view('#MGR#', '#PATH_INFO{TREE}#', 'user');">
+        #MGR#
+      </a>
+    <maly-else/>
+    #MGR#
+    </maly-if>
+    <br>
+  </maly-loop>
+</maly-if>

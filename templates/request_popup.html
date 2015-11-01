@@ -1,0 +1,51 @@
+<html>
+<head>
+  <base href="#COMPLETE_HTML_BASE_PATH#/"/>
+  <link rel="stylesheet" type="text/css" href="style.css" />
+
+  <title>DirectoryManager Load Template</title>
+</head>
+
+<body>
+  <form action="#URL#/#PATH_INFO{CLASS}#" method=GET target="DM_main">
+
+  <table border=0 align=center>
+  <tr>
+    <th align=center>
+      Load Template:
+    </th>
+  </tr>
+
+  <maly-if var="REQUESTS">
+  <tr>
+    <td align=center>
+      <select name=filename>
+      <maly-loop hash=1 var="REQUESTS">
+        <option value="#KEY#">#VALUE#</option>
+      </maly-loop>
+      </select>
+    </td>
+  </tr>
+  <tr>
+    <td align=center>
+      <input type=submit name=action value="Load">
+    </td>
+  </tr>
+  <maly-else/>
+  <tr>
+    <td align=center>
+      No templates available to load.
+    </td>
+  </tr>
+  </maly-if>
+  <tr>
+    <td align=center>
+      <input type=submit value="Close Window" onClick="window.close();">
+    </td>
+  </tr>
+  
+  </table>
+
+  </form>
+
+</body></html>

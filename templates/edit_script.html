@@ -1,0 +1,106 @@
+function multivalue_edit(s)
+{
+  var name = s.name;
+  var value = get_field_value(s);
+  var text_field = get_field(name+'_text');
+  if (value)
+  {
+    if (text_field) { text_field.value = null; }
+    //if (text_field) { text_field.value = null; hideSection(text_field); }
+  //} else if (! value) {
+  //  if (text_field) { showSection(text_field); }
+  }
+}
+
+function updateSectionsForEntryType(sel)
+{
+  sel = get_field(sel);
+  var value = get_field_value(sel);
+  var type_sections = new Array();
+  <maly-loop var="ENTRY_TYPES" hash=1>
+    sections = "#LIST_COLON:VALUE{SECTIONS}#"; type_sections['#KEY#'] = sections.split(":");
+  </maly-loop>
+
+  // Shut off all sections except those mentioned.
+
+  var all_enabled_sections_string = new String('#LIST_COLON:ENABLED_SECTIONS#');
+  var all_enabled_sections = all_enabled_sections_string.split(":");
+
+  var which_sections = type_sections[value];
+
+  if(! which_sections || ! which_sections.length) { return; }
+
+  SECTION: for(var i = 0; i < all_enabled_sections.length; i++)
+  {
+    var section = all_enabled_sections[i];
+    var found = 0;
+    WHICH_SECTION: for (var j = 0; j < which_sections.length; j++)
+    {
+      if (which_sections[j] == section || section == 'tracking')
+      {
+        found = 1;
+	showSection(section+"_master");
+	showSection(section);
+	break WHICH_SECTION;
+      }
+    }
+
+    if (! found)
+    {
+      hideSection(section+"_master");
+    }
+  }
+}
+
+function formSubmit(f)
+{
+  <maly-if var="CONFIG{IMPLICIT_LINK}">
+    <maly-loop var="LINKS" hash=1>
+      selectSubmit('#KEY#');
+    </maly-loop>
+  <maly-else/>
+    <maly-loop var="LINKS" hash=1>
+      selectSubmit('#KEY#_add');
+      selectSubmit('#KEY#_remove');
+    </maly-loop>
+  </maly-if>
+
+  <maly-loop var="MULTIPLE" name="ATTR">
+    selectSubmit('#ATTR#');
+  </maly-loop>
+
+  if (f.action != 'Update Entry' && f.action != 'Add Entry')
+  {
+    return true;
+  }
+
+  // Now check required fields...
+  <maly-loop var="SECTIONS" name="SECTION">
+    <maly-loop var="SECTION{COLUMNS}" name="ATTR">
+      <maly-if var="ATTR" in="REQUIRED">
+      var v;
+      var field;
+      if (isEnabledSection('#SECTION{ABBREV}#_master') && (field = document.editForm.#ATTR#) && ! get_field_value(document.editForm.#ATTR#))
+      {
+        alert("Value required for '#ATTR#'.");
+        field.focus();
+	return false;
+      }
+      <maly-elsif var="ATTR" in="MODULES{#PATH_INFO{CLASS}#}{REQUIRED}"/>
+      var field;
+      var v;
+      if ((field = document.editForm.#ATTR#) && ! get_field_value(document.editForm.#ATTR#))
+      {
+        alert("Value required for '#ATTR#'.");
+        field.focus();
+	return false;
+      }
+
+      </maly-if>
+
+    </maly-loop>
+  </maly-loop>
+
+  return true;
+}
+

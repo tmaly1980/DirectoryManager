@@ -1,0 +1,83 @@
+<html>
+<head>
+  
+  <title>Directory Manager 2.0 Documentation: Web Server Configuration</title>
+  <link href="../style.css" rel="stylesheet" type="text/css"></link>
+</head>
+<body>
+  <p> 
+	Navigation:
+	<a href="../" name="top">Top</a> | <a href="./">Up</a> | <a href="Javascript:history.go(-1)">Back</a>
+  </p>
+
+  <p align="center" style="font-size: 20px; font-weight: bold">Directory Manager 2.0 Documentation: Web Server Configuration</p>
+  
+	<ol>
+
+	<li style=''>Enable write permission by the web server's user ('apache' in the example below) to the <b>etc/DirectoryManager</b> directory, if not using suexec with Apache. This can only be done as the root superuser:
+
+	<div align="left" style="background-color: #CCCCCC; font-family: monospace; white-space: pre">
+cd /var/www/DirectoryManager
+chown apache etc/DirectoryManager
+chmod u+rw etc/DirectoryManager
+	</div>
+<p style='text-indent: 8px'>If you do not have superuser access, you can easily enable universal write permission on the directory instead:</p>
+
+
+	<div align="left" style="background-color: #CCCCCC; font-family: monospace; white-space: pre">chmod 1777 etc/DirectoryManager</div>
+<p style='text-indent: 8px'>If using suexec (instead of doing either of the above two options), change CGI and file permissions to match that of the effective user (as root, if necessary):</p>
+
+
+	<div align="left" style="background-color: #CCCCCC; font-family: monospace; white-space: pre">
+chown user.group cgi-bin/*
+chown user.group etc/DirectoryManager
+	</div>
+
+	</li>
+
+	<li style=''>Set up the password file to the administrative (configuration) page via altering the DirectoryManager/cgi-bin/admin/.htaccess file:
+
+	<div align="left" style="background-color: #CCCCCC; font-family: monospace; white-space: pre">AuthUserFile "/var/www/DirectoryManager/etc/admin_password"</div>
+<p style='text-indent: 8px'>The default user is 'admin' and the password is 'DirectoryManager1'. PLEASE change this by using the 'htpasswd' tool:</p>
+
+
+	<div align="left" style="background-color: #CCCCCC; font-family: monospace; white-space: pre">htpasswd /var/www/DirectoryManager/etc/admin_password admin</div>
+
+	</li>
+
+	<li style=''>The software can operate either using an Apache virtual host, or a plain subdirectory (recommended for those who do not have administrative rights over the Apache server).
+
+	<ol>
+	<li style=''>Using an Apache Virtual Host, add the following information to httpd.conf (consult your Apache documentation for details):
+
+	<div align="left" style="background-color: #CCCCCC; font-family: monospace; white-space: pre">
+NameVirtualHost *:80
+
+&lt;VirtualHost *:80&gt;
+  ServerName dir.malysoft.com
+  ServerAlias ldap dir
+  DocumentRoot /var/www/DirectoryManager
+  ScriptAlias /cgi-bin /var/www/DirectoryManager/cgi-bin
+  SuexecUsersGroup diruser dirgroup 
+  # Ignore previous line if Apache 1.3 or not using 'suexec'
+&lt;/VirtualHost&gt;
+	</div>
+
+	</li>
+<p style='text-indent: 8px'>This will make the content available at http://dir.malysoft.com/ . Additional work may be required to a DNS server to facilitate this hostname resolving to the web server.</p>
+
+
+	<li style=''>
+	Using a plain directory, one needs not modify Apache nor DNS configuration, and simply places the DirectoryManager tree under an existing location from a web server. For example, if /usr/local/webapps corresponds to http://www.malysoft.com/, then /usr/local/webapps/DirectoryManager corresponds to http://www.malysoft.com/DirectoryManager/
+	</li>
+	</ol>
+
+	</li>
+
+	<li style=''>Verify that loading the Directory Manager site shows either a web page or an 'Internal Server Error' page. If Perl code is displayed instead, consult with your Apache Administrator to ensure that the 'AllowOverride All' option is set for the given directory. Recieving an Internal Server Error (500) simply means that you need to install the prerequisite modules.</li>
+	</ol>
+  
+
+  <p align="center">Copyright &copy; 2004-2005 <a href="http://www.malysoft.com/">Maly Soft</a></p>
+</body>
+</html>

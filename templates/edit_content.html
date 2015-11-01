@@ -1,0 +1,219 @@
+  <tr>
+    <td style="padding: 10px">
+      <form style="padding: 0px; margin: 0px" method="POST" action="#PATHINFO_URL#">
+        <table border=0 class="header" cellpadding=5 width="100%">
+	  <tr>
+	    <td align=left><maly-if var="BULKCHANGE">Bulk Changes:
+	    <maly-else/>#ENTRY{DN}#
+              <maly-load file="#CUSTOM_DIR#/header"/>
+	    </maly-if>
+	    </td>
+	    <td align=right>
+	      <maly-if var="MODE" eq='Edit'>
+	        <a href="#ENTRY{VIEW_URL}#?popup=#FORM{POPUP}#">View</a>
+	      <maly-elsif eval="('#HAS_ADMIN_ACCESS#' or '#HAS_REQUESTOR_ACCESS#') and not '#BULKCHANGE#'"/>
+	        Template:
+		<maly-if var="TEMPLATES">
+		  <input type=hidden name="filename" value="#FORM{FILENAME}#">
+		  <input type=hidden name="popup" value="#FORM{POPUP}#">
+		  <select name="template" id="template">
+		    <maly-loop var="TEMPLATES" name="NAME">
+		      <option value="#NAME#">#NAME#</option>
+		    </maly-loop>
+		  </select>
+	          <input type=submit name=action value="Load">
+		<maly-else/>
+		  <i>None Available</i>
+		</maly-if>
+
+	      <maly-else/>
+	        &nbsp;
+	      </maly-if>
+	    </td>
+	  </tr>
+	</table>
+	</form>
+
+      <form method="POST" action="#PATHINFO_URL#" onSubmit="return formSubmit(this);" enctype="multipart/form-data" name="editForm">
+	  <maly-if eval="'#HAS_ADMIN_ACCESS#' and '#ENABLED_ENTRY_TYPES#'">
+          <table border=0 class="header" cellpadding=5 width="100%">
+	  <tr class="data2">
+	    <td class="data2" colspan=2 align=left>
+	      <span style="font-weight: bold">Entry Type: </span>
+	      <select name="entry_type" id="entry_type" onChange="return updateSectionsForEntryType(this);">
+	        <maly-loop var="ENABLED_ENTRY_TYPES" hash=1>
+		  <option value="#KEY#">#VALUE{NAME}#</option>
+		</maly-loop>
+	      </select>
+	    </td>
+	  </tr>
+	  </table>
+	  </maly-if>
+
+
+	<maly-loop var="SECTIONS" name="SECTION">
+	<maly-if var="SECTION{ABBREV}" in="ENABLED_SECTIONS">
+	<maly-if eval="'#MODE#' ne 'Add' or '#SECTION{ABBREV}#' ne 'tracking'">
+	<div id="#SECTION{ABBREV}#_master">
+	  <div width="100%" style="font-weight: bold" class="section_header">
+	    <input type=checkbox name="checkbox_#SECTION{ABBREV}#" value=1 checked=checked onClick="toggleSection(this, '#SECTION{ABBREV}#');">
+	    #SECTION{NAME}#:
+	  </div>
+
+	  <div id="#SECTION{ABBREV}#">
+
+	  <table border=0 cellpadding=2 cellspacing=0 width="100%" align=center>
+	    <maly-loop var="SECTION{COLUMNS}" group_count=2 name="ROW">
+	    <maly-set var="DATA_CLASS" eval="'#MALYITER#' % 2 == 0 ? 'data' : 'data2' "/>
+	      <tr>
+		<maly-loop var="ROW" name="ATTR">
+		<maly-if var="ATTR">
+		<maly-if not=1 var="BULKCHANGE">
+		  <maly-if var="ATTR" in="REQUIRED">
+		    <maly-set var="REQUIRED_CLASS" value="required"/>
+		  <maly-elsif var="ATTR" in="CONFIG{MODULES}{#PATH_INFO{CLASS}#}{REQUIRED}"/>
+		    <maly-set var="REQUIRED_CLASS" value="required"/>
+		  <maly-else/>
+		    <maly-set var="REQUIRED_CLASS" value=""/>
+		  </maly-if>
+		</maly-if>
+	        <th valign=top align=right class="viewheadercol #REQUIRED_CLASS#" width="15%">#HEADER{#ATTR#}#:</th>
+		<td class="#DATA_CLASS#" valign=top width="35%">
+		  <maly-if var="SECTION{WRITE_COLS}{#ATTR#}">
+		    <maly-if var="ACCESS" in="SECTION{WRITE_COLS}{#ATTR#}" not=1>
+#include view_field
+		    <maly-else/>
+#include edit_field
+                    </maly-if>
+                  <maly-elsif var="ATTR" in="READONLY"/>
+#include view_field
+                  <maly-else/>
+#include edit_field
+                  </maly-if>
+		</td>
+		<maly-else/>
+		<td class="#DATA_CLASS#" colspan=2 width="50%">&nbsp; </td>
+		</maly-if>
+                </maly-loop>
+	      </tr>
+	    </maly-loop>
+
+	  </table>
+
+	  </div>
+	</div>
+	</maly-if>
+	</maly-if>
+	</maly-loop>
+
+	<div class="required header" width="100%" style="padding: 5px">
+	<hr>
+	* = Fields in Red Required
+	</div>
+
+	<table border=0 class="header" cellpadding=1 style="padding: 5px" width="100%">
+		<maly-if eval="'#ENTRY{HAS_EDIT_ACCESS}#' or ('#MODE#' eq 'Edit' or '#HAS_ADMIN_ACCESS#')">
+		<tr>
+		  <th class="header" align=left width="20%">
+		    <maly-if var="MODE" eq="Add">
+		      To Add this entry:
+		    <maly-else/>
+		      To Save this entry:
+		    </maly-if>
+		  </th>
+		  <td class="header" align=left>
+		    <maly-if var="MODE" eq="Add">
+		      <input type="submit" name="action" value="Add Entry">
+		    <maly-else/>
+		      <input type="submit" name="action" value="Update Entry">
+		    </maly-if>
+		  </td>
+		</tr>
+		</maly-if>
+
+		<maly-if eval="('#HAS_REQUESTOR_ACCESS#' or '#HAS_ADMIN_ACCESS#') and '#MODE#' eq 'Add'">
+		<tr>
+		  <th class="header" align=left width="20%">
+		    To Request this entry be added:
+		  </th>
+		  <td class="header" align=left>
+		    <input type="submit" name="action" value="Submit Request to Admins">
+	          </td>
+		</tr>
+		</maly-if>
+
+		<maly-if eval="'#MODE#' eq 'Add' and '#HAS_ADMIN_ACCESS#'">
+		<tr>
+		  <th class="header" valign=top align=left width="20%">
+		    <maly-if var="ENTRY{TEMPLATE_NAME}">
+		      To Update this Template:
+		    <maly-else/>
+		      To Save this as a Template:
+		    </maly-if>
+		  </th>
+		  <td class="header" align=left>
+		    <table border=0>
+		    <tr>
+		      <th class="header">Name:</th>
+		      <td> <input type="text" size="10" name="template_name" value="#ENTRY{TEMPLATE_NAME}#"></td>
+		    </tr>
+		    <tr>
+		      <th class="header"> Save To: </th>
+		      <td>
+		        <select name="GLOBAL_TEMPLATE" id="global_template">
+		          <option value="1">All Trees (Global)</option>
+		          <option value="0">This Tree (#ROOTCONF{#PATH_INFO{TREE}#}{NAME}#)</option>
+		        </select>
+	              </td>
+		    </tr>
+		    <tr>
+		      <td class="header">&nbsp;</td>
+		      <td>
+		        <input type="submit" name="action" value="Save As Template">
+	              </td>
+		    </tr>
+		  </table>
+	          </td>
+		</tr>
+		<maly-if var="ENTRY{TEMPLATE_NAME}">
+		<!--
+		<tr>
+		  <th class="header" valign=top align=left width="20%">
+		    To Remove this Template (#ENTRY{TEMPLATE_NAME}#):
+		  </th>
+		  <td class="header" align=left>
+		    From: 
+		    <select name="GLOBAL_TEMPLATE">
+		      <maly-if var="ENTRY{TEMPLATE_IN_GLOBAL}">
+		        <option value="1">All Trees (Global)</option>
+		      </maly-if>
+		      <maly-if var="ENTRY{TEMPLATE_IN_TREE}">
+		          <option value="0">This Tree (#ROOTCONF{#PATH_INFO{TREE}#}{NAME}#)</option>
+		      </maly-if>
+		    </select>
+		    <input type="submit" name="action" value="Remove Template">
+	          </td>
+		</tr>
+		-->
+
+		</maly-if>
+
+		</maly-if>
+
+	        <maly-if eval="'#MODE#' eq 'Edit' and '#HAS_ADMIN_ACCESS#'">
+		<tr>
+		  <th class="header" align=left width="20%">
+		    To Delete this entry:
+		  </th>
+		  <td class="header" align=left>
+		    <input type="submit" name="action" value="Delete" class="em" onClick="return confirm('Are you sure you want to delete this entry?\n#ENTRY{DN}#\n(#ENTRY{#DISPLAY_KEY#}#)'); "/>
+	          </td>
+		</tr>
+	        </maly-if>
+	</table>
+      </form>
+    </td>
+  </tr>
+
+
+

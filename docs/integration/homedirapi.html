@@ -1,0 +1,40 @@
+<html>
+<head>
+  
+  <title>Directory Manager 2.0 Documentation: Home Directory Creation API Specification</title>
+  <link href="../style.css" rel="stylesheet" type="text/css"></link>
+</head>
+<body>
+  <p> 
+	Navigation:
+	<a href="../" name="top">Top</a> | <a href="./">Up</a> | <a href="Javascript:history.go(-1)">Back</a>
+  </p>
+
+  <p align="center" style="font-size: 20px; font-weight: bold">Directory Manager 2.0 Documentation: Home Directory Creation API Specification</p>
+  
+<p style='text-indent: 16px'>The Home Directory Creation RPC Daemon being Perl requires that the home directory server be a UNIX server with Perl. In the case that your main file server is NOT a UNIX server, you can develop your own HTTP-form processing application (in Java, C++, etc.. on whatever platform your server is) to serve such requests.</p>
+
+		
+		The daemon must either function from a web server running as a CGI (it MUST run as a privileged user that can create home directories), or may function from a standalone service/process that listens on a port and properly serves HTTP POST requests.
+<p style='text-indent: 16px'>The following parameters are provided AS HTTP POST PARAMETERS to the daemon:</p>
+
+		  UID = The username (NOT ID#!)
+		  GID = The primary group name (NOT ID#!)
+		  DIR = The path of the home directory. If the home directory server is a separate server, this is POSSIBLY not the true path that must be used (in that case, simply hardcode the home directory based upon the username).
+<p style='text-indent: 16px'>The following plain-text response content, and their respective code, (Don't forget the 'Content-Type: text/plain' header!) are given back to Directory Manager:</p>
+
+		  Directory Created (200) = All is well
+		  Directory exists but has wrong owner/group (500) = Directory needs to be manually fixed by an administrator due to improper permissions
+		  Unauthorized (401) = Didn't provide login, or login wasn't correct
+		  Must specify ALL parameters (UID, GID, DIR) (500) = Not all required parameters were passed
+		  No commands specified in script (500) = The script was not properly configured to do anything in order to create the home directory
+		  Error running command '$command': $error (500) = The commands in the script failed to run, probably due to an authorization issue on the server end (i.e. NOT being 'root', as the daemon SHOULD be)
+<p style='text-indent: 16px'>The text is simply a message (in the HTTP content section) printed back on the screen of the Directory Manager client. It is the exact message code (200, 500, etc) that specifies success or failure.</p>
+
+<p style='text-indent: 16px'>Remember, authentication is sent by Directory Manager, and should be implemented (i.e. Basic-Authentication) in the RPC Daemon.</p>
+
+	
+
+  <p align="center">Copyright &copy; 2004-2005 <a href="http://www.malysoft.com/">Maly Soft</a></p>
+</body>
+</html>

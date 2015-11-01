@@ -1,0 +1,12 @@
+<maly-loop name="SECTION_NAME" var="ENABLED_SECTIONS">
+  <maly-set var="SECTION" from="SECTIONS{ABBREV=#SECTION_NAME#}"/>
+  <maly-loop var="SECTION{COLUMNS}" name="ATTR">
+  <maly-if var="FORM{#ATTR#}">
+    <maly-set var="VALUE_OR_DEFAULT{#ATTR#}" from="FORM{#ATTR#}"/>
+  <maly-elsif var="ENTRY{#ATTR#}"/>
+    <maly-set var="VALUE_OR_DEFAULT{#ATTR#}" from="ENTRY{#ATTR#}"/>
+  <maly-elsif var="CONFIG{DEFAULT}{#PATH_INFO{CLASS}#}{#ATTR#}"/>
+    <maly-set var="VALUE_OR_DEFAULT{#ATTR#}" from="CONFIG{MODULES}{#PATH_INFO{CLASS}#}{DEFAULTS}{#ATTR#}"/>
+  </maly-if>
+  </maly-loop>
+</maly-loop>

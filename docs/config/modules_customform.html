@@ -1,0 +1,52 @@
+<html>
+<head>
+  
+  <title>Directory Manager 2.0 Documentation: Customizable Form Drop-Downs</title>
+  <link href="../style.css" rel="stylesheet" type="text/css"></link>
+</head>
+<body>
+  <p> 
+	Navigation:
+	<a href="../" name="top">Top</a> | <a href="./">Up</a> | <a href="Javascript:history.go(-1)">Back</a>
+  </p>
+
+  <p align="center" style="font-size: 20px; font-weight: bold">Directory Manager 2.0 Documentation: Customizable Form Drop-Downs</p>
+  
+	The data entry forms for adding and editing entries can be customized for each enabled module. It can take plain-text fields and change them into a pre-defined list of option items for easier form fill-out. There will ALWAYS be the option of entering in an 'other' value (i.e. one not in the predefined list). WARNING: Colon characters (':') are NOT allowed.
+		<hr>
+	<div>
+	  <span style="font-weight: bold">To ADD or EDIT a drop-down list for a particular entry field:</span>
+
+	  <ol>
+	  <li style=''>Find the exact LDAP schema attribute name, available via the HTML source code of the form in question.</li>
+	  <li style=''>If it already is in the left-side list ('Form Field'), click on it.</li>
+	  <li style=''>If it is not already in the list, click on 'Add' and then enter in the name. Click on it to then highlight it.</li>
+	  <br>
+	  <li style=''>Start adding or removing possible values from the right-hand list ('Field Values'), by typing clicking on 'Add' and entering in values, or clicking on a value and then 'Remove'.</li>
+	  <li style=''>Once you are done editing the list of a specific form field, click on 'Save' in between the two lists.</li>
+	  <li style=''>Once you click on 'Update' at the bottom of the screen, the settings will be saved and will take effect immediately.</li>
+	  </ol>
+	</div>
+	<div>
+	  <span style="font-weight: bold">To REMOVE certain options from a drop-down list:</span>
+	  <ol>
+		<li style=''>Click on the field name in the 'Form Field' list on the left.</li>
+		<li style=''>Click on the item on the right-hand list ('Form Values') and click on 'Remove'.</li>
+		<li style=''>Click on 'Save' in between the lists to make the list up-to-date.</li>
+		<li style=''>Click on 'Update' at the bottom of the screen for it to take effect in the configuration file.</li>
+	  </ol>
+	</div>
+	<div>
+	  <span style="font-weight: bold">To REMOVE an entire drop-down list (and have the form option revert back to just a plain-text field):</span>
+	  <ol>
+		<li style=''>Click on the field name in the 'Form Field' left-hand list.</li>
+		<li style=''>Click on 'Remove' from the left-hand side, underneath the left-hand list.</li>
+		<li style=''>Click on 'Update' at the bottom of the screen to save the configuration.</li>
+	  </ol>
+	</div>
+
+	  
+
+  <p align="center">Copyright &copy; 2004-2005 <a href="http://www.malysoft.com/">Maly Soft</a></p>
+</body>
+</html>

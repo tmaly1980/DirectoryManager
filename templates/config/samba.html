@@ -1,0 +1,58 @@
+<maly-set var="CUSTOM_ONLOAD">
+</maly-set>
+<maly-set var="CUSTOM_SUBMIT">
+</maly-set>
+<maly-set var="CUSTOM_SCRIPT">
+</maly-set>
+<maly-set var="CUSTOM_STYLE">
+</maly-set>
+<maly-set var="CONTENT">
+  <div align=right> <a href="Javascript:void(0)" onClick="helpPopup('config/index.html#samba3');">HELP</a> </div>
+
+  <table border=0 cellspacing=0 cellpadding=3 class="config">
+    <tr>
+      <td colspan=3>The following applies to using Samba 3.x (NOT 2.2.x!) as a Domain Controller with this LDAP tree as it's user/group backend. The user/group mappings below apply only to users in the Directory (i.e. enforces the SID to map correctly). <b>If the user/group does NOT exist within LDAP, then you MUST follow the directions in the documentation under the 'Samba Server' section.</b></td>
+    </tr>
+
+    <tr class="config">
+      <th>Samba SID</th>
+      <td>
+        <input type=text name="SAMBASID" value="#CONF{SAMBA}{SID}#">
+      </td>
+    </tr>
+
+    <tr class="config">
+      <th>Samba Domain Administrator</th>
+      <td>
+        <input type=text name="SAMBAADM" value="#CONF{SAMBA}{ADM}#">
+      </td>
+    </tr>
+    <tr class="config">
+      <th>Samba Domain Administrator Group</th>
+      <td>
+        <input type=text name="SAMBADOMADM" value="#CONF{SAMBA}{DOMADM}#">
+      </td>
+    </tr>
+    <tr class="config">
+      <th>Samba Domain Users Group</th>
+      <td>
+        <input type=text name="SAMBADOMUSERS" value="#CONF{SAMBA}{DOMUSERS}#">
+      </td>
+    </tr>
+    <tr class="config">
+      <th>Samba Domain Guest Group</th>
+      <td>
+        <input type=text name="SAMBADOMGUEST" value="#CONF{SAMBA}{DOMGUEST}#">
+      </td>
+    </tr>
+    <tr class="config">
+      <th>Samba Guest User</th>
+      <td>
+        <input type=text name="SAMBAGUEST" value="#CONF{SAMBA}{GUEST}#">
+      </td>
+    </tr>
+  </table>
+
+</maly-set>
+
+#include main

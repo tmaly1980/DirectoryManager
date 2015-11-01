@@ -1,0 +1,34 @@
+<html>
+<head>
+  
+  <title>Directory Manager 2.0 Documentation: Cross-Referenced Data</title>
+  <link href="../style.css" rel="stylesheet" type="text/css"></link>
+</head>
+<body>
+  <p> 
+	Navigation:
+	<a href="../" name="top">Top</a> | <a href="./">Up</a> | <a href="Javascript:history.go(-1)">Back</a>
+  </p>
+
+  <p align="center" style="font-size: 20px; font-weight: bold">Directory Manager 2.0 Documentation: Cross-Referenced Data</p>
+  
+<p style='text-indent: 16px'>Adding and editing entries can involve simultaneously altering related records, such as the auxiliary groups or the mailing lists of a user. This provides the ability to alter an entry and all the related ones from one page. </p>
+
+<p style='text-indent: 16px'>Cross-referencing can be done in two ways. It can be enabled to allow you to alter these related entries, where you will have a list of values. You can add and remove values by clicking on 'Add' or 'Remove'. Having the related entries inline has a significant performance impact, due to extra database lookups.</p>
+
+		<div style='padding: 5px' align=center><a href='../images/edit_crossref_complete.png' target='_new'><img src='../images/thumbs/edit_crossref_complete.png'></a></div>
+
+		* Note: These cross-referenced entries must already exist. I.e., you cannot add a new group to a user (via the user entry) when the group does not already exist.
+<p style='text-indent: 16px'>To improve performance, it is possible to manage cross referenced entries without having a complete list of current values displayed. </p>
+
+		
+		This allows free-form entry of what to remove and what to add. In the case that you remove an entry that does not link to this entry, it will silently skip the operation. 
+		
+		This scenario allows you to do modifications to the cross-referenced entries, without the poor performance of having to do extra database lookups prior.
+		<div style='padding: 5px' align=center><a href='../images/edit_crossref_partial.png' target='_new'><img src='../images/thumbs/edit_crossref_partial.png'></a></div>
+
+	
+
+  <p align="center">Copyright &copy; 2004-2005 <a href="http://www.malysoft.com/">Maly Soft</a></p>
+</body>
+</html>

@@ -1,0 +1,3 @@
+<maly-loop name="ATTR" var="COLUMNS">#ATTR#<maly-if eval="'#MALYITER#' < '#MALYLASTITER#'">	</maly-if></maly-loop>
+<maly-loop name="ENTRY" var="RESULTS"><maly-loop name="ATTR" var="COLUMNS"><maly-load file="custom_fields/CSV/#CLASSNAME#/#ATTR#">#ENTRY{#ATTR#}#</maly-load><maly-if eval="'#MALYITER#' < '#MALYLASTITER#'">	</maly-if></maly-loop>
+</maly-loop>

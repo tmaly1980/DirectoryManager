@@ -1,0 +1,93 @@
+<html>
+<head>
+  
+  <title>Directory Manager 2.0 Documentation: Overview</title>
+  <link href="../style.css" rel="stylesheet" type="text/css"></link>
+</head>
+<body>
+  <p> 
+	Navigation:
+	<a href="../" name="top">Top</a> | <a href="../">Up</a> | <a href="Javascript:history.go(-1)">Back</a>
+  </p>
+
+  <p align="center" style="font-size: 20px; font-weight: bold">Directory Manager 2.0 Documentation: Overview</p>
+  <div style="padding-top: 10px; padding-left: 20px"><null><ul><li style=''><a href="#modules">Modules</a></li><li style=''><a href="#samba">Samba Integration/Migration</a></li><li style=''><a href="#homedir">Home Directory Creation</a></li><li style=''><a href="#multitree">Multiple Directory Server/Tree Management</a></li><li style=''><a href="#acl">Access Control/Administration</a></li><li style=''><a href="#modrestrict">Module Restriction</a></li></ul>
+	The following sections describe how Directory Manager works from a broad technical standpoint.
+
+	<a href='#top' name='modules'><div style='padding-top: 10px; font-size: 14px; font-weight: bold'>Modules</div></a>
+<p style='text-indent: 16px'>Modules are the different types of entries available, such as users or groups. The are managed in separate areas of the management menu, separated by tab buttons.</p>
+
+<p style='text-indent: 16px'>The following modules are supported:</p>
+
+		<ul>
+		<li style=''><b>Users</b>: Includes address book entries, UNIX account entries, and Samba 2/3 account entries
+		<li style=''><b>Groups</b>: Includes UNIX and Samba 3 account entries
+		<li style=''><b>Mailing Lists</b>: Email lists compatible with Sendmail and other MTA's. Specific configuration is documented in the 'Third-Party Integration' section.
+		<li style=''><b>Locations</b>: Lists rooms, offices, buildings, etc... i.e. a general 'place' where events happen.
+		<li style=''><b>Access Groups</b>: Internal to Directory Manager, this determines which users (LDAP DN's) belong to which groups that ultimately have a certain level of administrative access within Directory Manager
+		</li></li></li></li></li></ul>
+	<a href='#top' name='samba'><div style='padding-top: 10px; font-size: 14px; font-weight: bold'>Samba Integration/Migration</div></a>
+<p style='text-indent: 16px'>Both Samba 2.2.x and Samba 3.x can store user (and Samba 3.x group) entries within LDAP. Directory Manager lets you specify users on a case-by-case basis as to whether they should be a UNIX user, Samba 3 user or Samba 2 user. Modifying a user permits going back and forth between different types of accounts. For example, you can create a UNIX-only user, enable Samba, then later on disable Samba back to UNIX-only.</p>
+
+<p style='text-indent: 16px'>The administrative menu also permits a seamless migration for UNIX users to Samba 2/3. This can be done by the touch of a button, and can be done per tree or globally for all trees configured. You can also revert back from Samba 3 to Samba 2, or Samba to plain UNIX users within the database.</p>
+
+<p style='text-indent: 16px'>Samba support (for users) can be provided for Samba 3, while simultaneously and transparently providing backwards-compatible Samba 2 support. This provides to be useful when there is a mixed network of Samba 2 and 3 servers. This also is useful to provide simplified upgrading from Samba 2 servers to Samba 3 servers.</p>
+
+
+		* Warning: Since migration to/from Samba for the entire directory can be done with the click of a single button, this should be used with absolute caution.
+
+	<a href='#top' name='homedir'><div style='padding-top: 10px; font-size: 14px; font-weight: bold'>Home Directory Creation</div></a>
+<p style='text-indent: 16px'>In most cases of managing UNIX user accounts, it becomes useful to be able to automatically create a new user's repsective home directory. It also becomes useful to create a (new) home directory for an existing user, such as if their home directory moves around. HOWEVER, with options such as PAM, it may be unnecessary to create home directories as they may be automatically be created upon first login.</p>
+
+<p style='text-indent: 16px'>Directory Manager makes this process simple, extensible and secure by using a remote RPC Daemon that runs on any arbitrary server (i.e. the master file server that ultimately hosts the home directories). In a small network, this may be the same server as the Directory Manager server itself, but is more likely a separate server in a larger environment.</p>
+
+<p style='text-indent: 16px'>The RPC Daemon ('homedird.pl') is a Perl script provided with Directory Manager and should be distributed to the file server. It is a service that runs (from inetd, xinetd, or by itself), and must be run as 'root'. Security is enforced by making the daemon function over HTTPS, using authentication provided by the client (i.e. Directory Manager).</p>
+
+<p style='text-indent: 16px'>Within the daemon script, you can specify whether or not to use HTTPS (requires the HTTP::Daemon::SSL Perl module), the port to listen on, as well as the required username and password for authentication.</p>
+
+<p style='text-indent: 16px'>The RPC Daemon gets triggered whenever 'Create Home Directory' is selected within a user upon edit/add. In the special case that the directory already exists, the daemon silently exits with an 'OK'. If the home directory creation fails, or if the home directory exists already but with improper permissions, the daemon will exit with a failure code. You must then manually diagnose and fix the problem.</p>
+
+<p style='text-indent: 16px'>See the section 'Home Directory Creation API' under 'Third-Party Integration' for details as to how to provide your own RPC daemon for unsupported platforms/systems.</p>
+
+
+	<a href='#top' name='multitree'><div style='padding-top: 10px; font-size: 14px; font-weight: bold'>Multiple Directory Server/Tree Management</div></a>
+<p style='text-indent: 16px'>Directory Manager can manage several directories from one simple-to-use management interface. Directory Manager can be installed and configured once on your entire network, and manage all the LDAP servers you want. Switching between managed directories is done simply by selecting a different server name in a drop-down menu from the main screen.</p>
+
+
+	<a href='#top' name='acl'><div style='padding-top: 10px; font-size: 14px; font-weight: bold'>Access Control/Administration</div></a>
+<p style='text-indent: 16px'>Access to Directory Manager can be restricted globally or per tree to logged in users, as well as permitting anonymous users access.</p>
+
+<p style='text-indent: 16px'>Administrative access can be divided into several levels:</p>
+
+			<ul>
+			<li style=''><b>Administrator</b>: Can add, remove, and modify all fields in an entry (such as UNIX/Samba account information for users)
+			<li style=''><b>Moderator</b>: Can modify existing entries' common information (not related to system administration, i.e. UNIX/Samba account information).
+			<li style=''><b>Requestor</b>: Can submit requests for certain entries (i.e. users) being added.
+			<li style=''><b>Self</b>: Can alter one's own information that is not internal to systems use (i.e. not UNIX/Samba information), as well as one's password.
+			</li></li></li></li></ul>
+<p style='text-indent: 16px'>Access control is distributed through LDAP-based group membership (NOT the same as UNIX groups). An administrator modifies such membership through the 'Access Groups' tab of the master authentication tree. Configuration involves designated which groups are given which levels of access. Altering memberships of this group provides immediate access of new users.</p>
+
+		
+		A specific tree is designated as the 'authentication tree', in which it stores all users and access groups for authentication of privileged (administrative) access levels. Even though only one server will have this tree as it's master, THIS TREE MUST BE REPLICATED TO ALL MANAGED SERVERS (for the sake of authorization).
+<p style='text-indent: 16px'>Though access control is configured through the web site, an OpenLDAP configuration file needs to be generated and distributed. This file is called DMACL.conf, and is generated from the main administrative menu. Every time a group gets added or removed from the access lists, this file must be redistributed to EVERY server.</p>
+
+
+	<a href='#top' name='modrestrict'><div style='padding-top: 10px; font-size: 14px; font-weight: bold'>Module Restriction</div></a>
+<p style='text-indent: 16px'>Modules can be restricted (and even removed) per managed tree or globally. This proves useful when certain modules are either not used, or contains sensitive information that should not be available for non-authorized personnel.</p>
+
+		
+		In the configuration menu, you simply specify which level of access is required (including 'Disabled' to disable a module entirely for such tree). You may choose from the following access levels:
+
+		<ul>
+		<li style=''><b>Disabled</b>: This module will not appear on the menu, i.e. it's 'tab' will not be visible. This proves useful when a certain module is simply not used within a tree (such as when specific trees/directories serve only one or two types of modules).
+		<li style=''><b>Anonymous</b>: This module appears for all users and permits anonymous searching/browsing. This is useful in the case of the users module, where people can simply go to the directory site and find a person's information without needing to log in. <b>This is the default.</b>
+		<li style=''><b>Logged-in user</b>: This module is not visible for anonymous users, but becomes visible when the person logs into the system.
+		<li style=''><b>Requestor</b>: Only users with 'requestor' (or higher) access (for the given tree/module) are permitted access to this module.
+		<li style=''><b>Moderator</b>: Only users with 'moderator' (or 'administrator') access (for the given tree/module) are permitted access.
+		<li style=''><b>Administrator</b>: Only administrators (for the tree/module) are permitted access.
+		</li></li></li></li></li></li></ul>
+</null></div>
+
+  <p align="center">Copyright &copy; 2004-2005 <a href="http://www.malysoft.com/">Maly Soft</a></p>
+</body>
+</html>

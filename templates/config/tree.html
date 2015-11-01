@@ -1,0 +1,167 @@
+<maly-set var="CUSTOM_ONLOAD">
+  set_field(f.REQUEST_RECIPIENTS, '#CONF{REQUEST_RECIPIENTS}#');
+  set_field(f.REQUEST_FROM, '#CONF{REQUEST_FROM}#');
+
+</maly-set>
+<maly-set var="CUSTOM_SUBMIT">
+  selectSubmit(f.ACL_PROFILE);
+  </maly-loop>
+
+</maly-set>
+<maly-set var="CUSTOM_SCRIPT">
+function verifyDeleteTree()
+{
+  return confirm("Are you SURE you want to delete this tree '#CONF{NAME}#' on host '#CONF{HOST}#' at base DN '#CONF{BASEDN}#'? This ONLY removes the configuration from DirectoryManager, it does NOT modify anything within the LDAP server.");
+}
+</maly-set>
+
+<maly-set var="CUSTOM_STYLE">
+
+</maly-set>
+<maly-set var="CONTENT">
+
+ <div align=right> <a href="Javascript:void(0)" onClick="helpPopup('config/index.html#tree');">HELP</a> </div>
+
+
+<input type=hidden name="add" value="#FORM{ADD}#">
+Edit Tree:
+<maly-if not=1 var="CONF{CONFIGURED}">
+  <div class="alert">
+  Please fill in ALL information.
+  </div>
+<maly-elsif not=1 var="CONF{INITIALIZED}"/>
+  <div class="alert">
+    Prior to use, please click on the 'Initialize' button to initialize the directory tree with the proper structure.
+  </div>
+<maly-elsif not=1 var="CONF{ACL_PROFILE}"/>
+  <div class="alert">
+    Please add a DEFAULT access control profile, below, to enable administrative access.
+  </div>
+</maly-if>
+  <maly-if not=1 var="CONF{SSL}{VERSION}">
+  <div>
+    * Note: To enable SSL, click on the 'SSL/TLS' tab above AFTER saving the tree.
+  </div>
+  </maly-if>
+
+
+  <table border=1 style="border-style: solid" cellspacing=0 cellpadding=3 class="config" align=center>
+
+    <tr class="config">
+      <th align=right>Tree Name:</th>
+      <td>
+        <input type=text name="NAME" value="#CONF{NAME}#">
+      </td>
+    </tr>
+
+    <tr class="config">
+      <th align=right>Tree Abbreviation:</th>
+      <td>
+        <input type=text name="TREENAME" value="#CONF{TREENAME}#">
+      </td>
+    </tr>
+
+    <tr class="config">
+      <th align=right>Server Host:</th>
+      <td>
+        <input type=text name="HOST" value="#CONF{HOST}#">
+      </td>
+    </tr>
+
+    <tr class="config">
+      <th align=right>Base DN:</th>
+      <td>
+        <input type=text name="BASEDN" value="#CONF{BASEDN}#">
+      </td>
+    </tr>
+
+    <tr class="config">
+      <th align=right>Root DN:</th>
+      <td>
+        <input type=text name="ROOTDN" value="#CONF{ROOTDN}#">
+      </td>
+    </tr>
+
+
+    <tr class="config">
+      <th align=right>Access Control Profiles:</th>
+      <td>
+      <maly-if var="CONF{ACCESS_CONTROL}">
+        <nobr>
+      <div>
+      <select name="ACL_PROFILE" id="ACL_PROFILE" size="4" multiple="multiple" style="width: 125px" 
+          onChange="return multiList_edit('ACL_PROFILE')">
+        <maly-loop var="CONF{ACL_PROFILE}" name="ACL">
+	  <maly-if var="CONF{ACCESS_CONTROL}{#ACL#}" not=1>
+	    <maly-set var="ACL_STYLE" value="color: red"/>
+	    <maly-set var="EXTRA_PROFILE" value="1"/>
+	  <maly-else/>
+	    <maly-set var="ACL_STYLE" value=""/>
+	  </maly-if>
+          <option value="#ACL#" style="#ACL_STYLE#">#ACL#</option>
+        </maly-loop>
+      </select>
+      </div>
+      <div align=left>
+      <a onclick="return multiList_prompt_add('ACL_PROFILE')" href="Javascript:void(0)">Add</a>
+       | <a onclick="return multiList_prompt_replace('ACL_PROFILE')" href="Javascript:void(0)">Replace</a>
+       | <a onclick="return multiList_remove('ACL_PROFILE')" href="Javascript:void(0)">Remove</a>
+    </div>
+	</nobr>
+      <maly-elsif not=1 var="TREENAMES"/>
+      <div class="important">Please save this tree first, to enable tie-in with an access control profile.
+      </div>
+      <maly-else/>
+      <div class="important">Please create an access control profile to enable tie-in with this tree, by clicking <a href="#URL#/acl">HERE</a>
+      </div>
+      </maly-if>
+      </td>
+    </tr>
+    </maly-if>
+
+    <maly-if var="CONF{CONFIGURED}">
+    <tr class="config">
+      <th align=right>Initialization:</th>
+      <td>
+        <table border=0 class="borderless">
+	  <tr>
+	    <td>
+        Root DN Password: 
+	    </td>
+	    <td>
+	<input type=password name="rootpw"><br>
+	    </td>
+	  </tr>
+	  <tr>
+	    <td colspan=2 align=left>
+        <input type=submit name="action" value="Initialize">
+	    </td>
+	  </tr>
+	  <maly-if var="CONF{INITIALIZED}">
+	  <tr>
+	    <td colspan=2 style="color: red; font-size: 16px; font-weight: bold">
+	    Directory Already Intialized
+	    </td>
+	  </tr>
+	  </maly-if>
+	</table>
+      </td>
+    </tr>
+
+    </maly-if>
+
+  </table>
+
+  <div class="required">
+   * = Required Information
+  </div>
+
+  <maly-if var="CONF{CONFIGURED}">
+  <div style="padding-top: 20px;" align=right>
+    <input type=submit name="action" value="Delete Tree From Configuration" style="color: red; font-weight: bold" onClick="return verifyDeleteTree();">
+  </div>
+  </maly-if>
+
+</maly-set>
+
+#include main

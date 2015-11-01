@@ -1,0 +1,227 @@
+<html>
+<head>
+  
+  <title>Directory Manager 2.0 Documentation: OpenLDAP Server Configuration</title>
+  <link href="../style.css" rel="stylesheet" type="text/css"></link>
+</head>
+<body>
+  <p> 
+	Navigation:
+	<a href="../" name="top">Top</a> | <a href="./">Up</a> | <a href="Javascript:history.go(-1)">Back</a>
+  </p>
+
+  <p align="center" style="font-size: 20px; font-weight: bold">Directory Manager 2.0 Documentation: OpenLDAP Server Configuration</p>
+  
+	<p>This section describes how to configure your OpenLDAP server(s) for use with Directory Manager. There is the assumption that you know how to configure OpenLDAP server for general use. If not, <a href="http://www.openldap.org/" target="_new">Visit Here</a> for more information. All of this is to be done as 'root', by the OpenLDAP Server system administrator.</p>
+
+	<p>If you do not currently have OpenLDAP Server installed, simply visit <a href="http://www.openldap.org/">http://www.openldap.org</a> to download. You will most likely need to also download an updated version of Sleepycat Berkeley DB, available at <a href="http://www.sleepycat.com/">http://www.sleepycat.com</a>.
+
+	<p>It is RECOMMENDED to go through most of the Directory Manager Overview, Installation, and Configuration chapters PRIOR to continuing.</p>
+
+	<p>Note: This makes the assumption that your configuration directory for OpenLDAP is in /etc/openldap. It may be in another location, such as /usr/local/etc/openldap or /usr/local/openldap/etc/openldap</p>
+
+	<p>Note: The following assumes you are editing an existing slapd.conf file, rather than creating a new file from scratch. The content below are merely modifications of the file, not the contents in it's entirety.</p>
+
+	<p>Modify /etc/openldap/slapd.conf to include the following modifications:</p>
+
+	<ol>
+	
+	<li style=''>Include all the entry schemas required for Directory Manager's modules (at the TOP of slapd.conf):
+
+	<div align="left" style="background-color: #CCCCCC; font-family: monospace; white-space: pre">
+include /etc/openldap/schema/core.schema
+include /etc/openldap/schema/cosine.schema
+include /etc/openldap/schema/nis.schema
+include /etc/openldap/schema/inetorgperson.schema
+include /etc/openldap/schema/misc.schema
+	</div>
+
+	<p>If using Samba 2, also include the schema, as provided by Directory Manager (copy the DirectoryManager/etc/samba2.schema file to /etc/openldap/schema):
+	<div align="left" style="background-color: #CCCCCC; font-family: monospace; white-space: pre">
+include /etc/openldap/schema/samba2.schema
+	</div>
+	</p>
+
+	<p>If using Samba 3, include the schema, as provided by your Samba distribution (or download from <a href="http://www.samba.org/">http://www.samba.org/</a>, and copy to /etc/openldap/schema:
+	<div align="left" style="background-color: #CCCCCC; font-family: monospace; white-space: pre">
+include /etc/openldap/schema/samba3.schema
+	</div>
+	</p>
+
+	</li>
+
+	<li style=''>You must choose an OpenLDAP server to serve the master source of your Authentication Tree. This tree functions as the authoritative source for users who use Directory Manager as an administrator, moderator or requestor. Create the directory that the data will be stored in, if it does not exist. Add the authentication tree to the slapd.conf file (near the bottom of the file):
+
+	<div align="left" style="background-color: #CCCCCC; font-family: monospace; white-space: pre">
+####################################
+database	bdb
+suffix		"o=authtree" # The exact suffix name is up to you.
+rootdn		"cn=manager,o=authtree"
+# Cleartext passwords, especially for the rootdn, should
+# be avoid.  See slappasswd(8) and slapd.conf(5) for details.
+# Use of strong authentication encouraged.
+rootpw		manager
+# The database directory MUST exist prior to running slapd AND 
+# should only be accessible by the slapd and slap tools.
+# Mode 700 recommended.
+directory	/usr/local/openldap/var/openldap-data-authtree
+# Indices to maintain
+index	objectClass	eq
+	</div>
+
+	</li>
+
+	<li style=''>
+	Restart slapd, and IMMEDIATELY configure Directory Manager (as documented in the 'Configuration' chapter) to add the tree and 'Initialize' it.
+	</li>
+
+	<li style=''><b>Server Replication</b>:
+
+	<p>If operating more than one physical OpenLDAP server, you will need to replicate your authentication tree (on the 'MASTER SERVER') to each other server (the 'SLAVE SERVERS'). This allows for proper authentication of administrative users (otherwise, the only allowed users to administer entries would be the Root DN's of the trees).</p>
+
+	<ol>
+	
+	<li style=''>In slapd.conf on the MASTER server, you need to add the following replication information FOR EVERY SLAVE server you wish to use. It is HIGHLY recommended to use TLS or SSL and stronger authentication. PLEASE consult the <a href="http://www.openldap.org/doc/" target="_new">OpenLDAP Administrator's Guide</a> for further details. Add the following to the authentication tree's definition:
+
+	<div align="left" style="background-color: #CCCCCC; font-family: monospace; white-space: pre">
+replica uri=ldap://slaveserver.domain.com:389 # Do one of these for each slave server
+  binddn="ROOTDN ON SLAVE SERVER"
+  bindmethod=simple credentials=PASSWORD
+	</div>
+
+	<p>Add a 'replogfile' directive to slapd.conf, BEFORE all tree definitions (make sure it is a FILE, NOT a directory!)
+	<div align="left" style="background-color: #CCCCCC; font-family: monospace; white-space: pre">
+replogfile /usr/local/openldap/var/replog-authtree.log
+	</div>
+	</p>
+
+	</li>
+
+	<li style=''>Create a version of the tree on the slave server in slapd.conf, with an 'updatedn' option to match the corresponding 'replica' information:
+	<div align="left" style="background-color: #CCCCCC; font-family: monospace; white-space: pre">
+####################################
+database	bdb
+suffix	"o=authtree" # The exact suffix name is up to you.
+rootdn	"cn=manager,o=authtree"
+# Cleartext passwords, especially for the rootdn, should
+# be avoid.  See slappasswd(8) and slapd.conf(5) for details.
+# Use of strong authentication encouraged.
+rootpw	manager
+# The database directory MUST exist prior to running slapd AND
+# should only be accessible by the slapd and slap tools.
+# Mode 700 recommended.
+directory	/usr/local/openldap/var/openldap-data-authtree
+# Indices to maintain
+index	objectClass	eq
+updatedn	"cn=manager,o=authtree"
+	</div>
+
+	</li>
+
+	<li style=''>Stop OpenLDAP on the master and slave server, and copy and import a data snapshot of the authentication tree:
+
+	<p>On the master server (remember to restart slapd afterwards):</p>
+	<div align="left" style="background-color: #CCCCCC; font-family: monospace; white-space: pre">
+killall slapd # Exact command WILL vary
+slapcat -b o=authtree -l authtree.ldif
+scp authtree.ldif user@slaveserver: # Or transfer however you wish
+	</div>
+
+	<p>On the slave server (remember to restart slapd afterwards):</p>
+	<div align="left" style="background-color: #CCCCCC; font-family: monospace; white-space: pre">
+killall slapd # Exact command WILL vary
+slapadd -b o=authtree -l authtree.ldif # i.e., the file transfered
+	</div>
+
+	</li>
+
+	<li style=''>Modify your OpenLDAP startup to start slurpd as well (this WILL differ based upon your system). Consult your system documentation for more information.</li>
+  </ol>
+  </li>
+
+	<li style=''>In a small environment, you might be using the authentication tree for both authentication and browsing (i.e. when you have only one tree). In this case, this next step is unneccessary.
+	
+	<p>For every other directory tree you will have other than the authentication tree, you will need to create the database definition in slapd.conf on the respective server. It is RECOMMENDED to create a separate directory (/usr/local/openldap/var/openldap-data-ms in this case) to store the database files separate from each other tree in the configuration file:</p>
+
+	<div align="left" style="background-color: #CCCCCC; font-family: monospace; white-space: pre">
+####################################
+database	bdb
+suffix		"dc=malysoft,dc=com"
+rootdn		"cn=manager,dc=malysoft,dc=com"
+# Cleartext passwords, especially for the rootdn, should
+# be avoid.  See slappasswd(8) and slapd.conf(5) for details.
+# Use of strong authentication encouraged.
+rootpw		manager
+# The database directory MUST exist prior to running slapd AND 
+# should only be accessible by the slapd and slap tools.
+# Mode 700 recommended.
+directory	/usr/local/openldap/var/openldap-data-ms
+# Indices to maintain
+index	objectClass	eq
+	</div>
+
+	</li>
+
+	<li style=''>If enabling SSL/TLS (RECOMMENDED) you will need to first create a Certificate and respective Private Key. To create a self-signed certificate run the following command using the OpenSSL tools:
+
+	<div align="left" style="background-color: #CCCCCC; font-family: monospace; white-space: pre">
+openssl req -new -x509 -nodes \
+  -keyout /etc/openldap/server.key \
+  -out /etc/openldap/server.cert -days 3650
+chmod go-rwx /etc/openldap/server.key
+	</div>
+
+	<p>NOTE: The "Common Name" MUST be the EXACT name (whether hostname, OR IP Address) that your LDAP clients will use. In otherwords, if they will connect to the LDAP server via the 'localhost' hostname, the "Common Name" MUST be set to 'localhost'.</p>
+
+	<p>Enable TLS in slapd.conf (PRIOR to any database definitions):
+	</p>
+	<div align="left" style="background-color: #CCCCCC; font-family: monospace; white-space: pre">
+TLSCertificateFile /etc/openldap/server.cert
+TLSCertificateKeyFile /etc/openldap/server.key
+	</div>
+
+	<p>If you wish to ENFORCE the use of SSL/TLS for updates, add:
+	</p>
+	<div align="left" style="background-color: #CCCCCC; font-family: monospace; white-space: pre">
+security update_tls=112
+	</div>
+
+	</li>
+
+	<li style=''>If creating the tree that will house the access control users and groups (the 'Authentication Tree'), you may need to restart slapd (the exact command may vary) and then 'Initialize' the directory from the Directory Manager Administration site:
+	<div align="left" style="background-color: #CCCCCC; font-family: monospace; white-space: pre">
+killall -HUP slapd # Exact command WILL vary
+killall -HUP slurpd # If slurpd isn't already running, you may need to start it
+	</div>
+	</li>
+
+	<li style=''>Configure Directory Manager with the proper access control (see the 'Configuration' chapter). Generate the DMACL.conf file and save to the OpenLDAP configuration directory. You will need to redo this step every time access control is modified:
+	<div align="left" style="background-color: #CCCCCC; font-family: monospace; white-space: pre">
+cp DMACL.conf /etc/openldap
+	</div>
+
+	<p>Add this file to the included files, near the top (after the schemas):
+
+	<div align="left" style="background-color: #CCCCCC; font-family: monospace; white-space: pre">
+include /etc/openldap/DMACL.conf
+	</div>
+	</p></li>
+
+	<li style=''>If you are using older mail clients such as Mozilla Mail prior to 1.7a, you may be required to enable the LDAPv2 protocol. To do so, add this to slapd.conf:
+	<div align="left" style="background-color: #CCCCCC; font-family: monospace; white-space: pre">
+allow bind_v2
+	</div>
+	</li>
+
+	<li style=''>Restart each OpenLDAP server to take effect:
+	<div align="left" style="background-color: #CCCCCC; font-family: monospace; white-space: pre">
+killall -HUP slapd # Command WILL vary
+	<div align="left" style="background-color: #CCCCCC; font-family: monospace; white-space: pre">
+	</div></div></li>
+
+	</ol>
+	</p>
+
+  <p align="center">Copyright &copy; 2004-2005 <a href="http://www.malysoft.com/">Maly Soft</a></p>
+</body>
+</html>

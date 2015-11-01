@@ -1,0 +1,8 @@
+<select style="width: 100%; height: 100px" multiple=multiple name="#ATTR#" id="#ATTR#">
+<maly-loop var="ENTRY{#ATTR#}" name="SUBENTRY">
+  <option value="#SUBENTRY{#LINKS{#ATTR#}{VALKEY}#}#">#SUBENTRY{#LINKS{#ATTR#}{VALKEY}#}#</option>
+</maly-loop>
+</select><br>
+<a href="Javascript:void(0)" onClick="return multiList_prompt_add('#ATTR#', '#PROMPT{#ATTR#}#');">Add</a> |
+<a href="Javascript:void(0)" onClick="return multiList_prompt_replace('#ATTR#', '#PROMPT{#ATTR#}#');">Replace</a> |
+<a href="Javascript:void(0)" onClick="return multiList_remove('#ATTR#');">Remove</a>

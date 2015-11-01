@@ -1,0 +1,10 @@
+<maly-if var="MODE" eq="Add">
+  <select name="uid" id="uid" onChange="multivalue_edit(this);">
+    <option value="${fi}${ln}">First Initial, Last Name</option>
+    <option value="${fn}">First Name</option>
+    <option value="${fn}${li}">First Name, Last Initial</option>
+    <option value="${ln}${fi}">Last Name, First Initial</option>
+    <option value="">Other:</option>
+  </select>
+</maly-if>
+<input type=text name="uid" id="uid_text" size=20 onChange="set_field('uid', '');">

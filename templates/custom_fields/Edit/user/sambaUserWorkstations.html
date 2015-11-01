@@ -1,0 +1,74 @@
+<table class="borderless #DATA_CLASS#" border="0" cellspacing="0" cellpadding="5">
+  <tr>
+    <td class="borderless #DATA_CLASS#">
+      <select name="#ATTR#" id="#ATTR#" size="4" multiple="multiple" style="width: 200px" 
+          onChange="return multiList_edit('#ATTR#')">
+	  <!-- V=#DUMPER:VALUE_OR_DEFAULT{#ATTR#}# -->
+        <maly-loop name="ATTR_VALUE" split="#ENTRY{SAMBAUSERWORKSTATIONS}#" at=",[ ]*">
+          <option value="#ATTR_VALUE#">#ATTR_VALUE#</option>
+        </maly-loop>
+      </select>
+    </td>
+    <td class="borderless #DATA_CLASS#" align="left">
+      <a onclick="return multiList_up('#ATTR#', null, 1)" href="Javascript:void(0)">Up</a>
+      <br><a onclick="return multiList_down('#ATTR#', null, 1)" href="Javascript:void(0)">Down</a>
+    </td>
+  </tr>
+  <tr>
+    <td class="borderless #DATA_CLASS#">
+      <a onclick="return multiList_prompt_add('#ATTR#', '#PROMPT{#ATTR#}#')" href="Javascript:void(0)">Add</a>
+       | <a onclick="return multiList_prompt_replace('#ATTR#', '#PROMPT{#ATTR#}#')" href="Javascript:void(0)">Replace</a>
+       | <a onclick="return multiList_remove('#ATTR#')" href="Javascript:void(0)">Remove</a>
+       <maly-if var="CROSS_REFERENCE_VIEW{#ATTR#}">
+       | <a onclick="return cross_reference_view('#ATTR#', '#CROSS_REFERENCE_VIEW{#ATTR#}{OC}#', '#CROSS_REFERENCE_VIEW{#ATTR#}{FIELD}#')" href="Javascript:void(0)">
+	   View
+         </a>
+       </maly-if>
+    </td>
+    <td class="#DATA_CLASS# borderless">
+      &nbsp;
+    </td>
+  </tr>
+</table>
+
+
+
+
+<!--
+<table class="borderless #DATA_CLASS#" border="0" cellspacing="0" cellpadding="5">
+  <tr>
+    <td class="borderless #DATA_CLASS#">
+      <select name="#ATTR#" id="#ATTR#" size="4" multiple="multiple" style="width: 200px" 
+          onChange="return multiList_edit('#ATTR#', '#ATTR#_TEXT')">
+        <maly-loop name="ATTR_VALUE" split="#ENTRY{SAMBAUSERWORKSTATIONS}#" at=", ">
+          <option value="#ATTR_VALUE#">#ATTR_VALUE#</option>
+        </maly-loop>
+      </select>
+    </td>
+    <td class="borderless #DATA_CLASS#" align="left">
+      <a onclick="return multiList_up('#ATTR#', '#ATTR#_TEXT')" href="Javascript:void(0)">Up</a>
+      <br><a onclick="return multiList_down('#ATTR#', '#ATTR#_TEXT')" href="Javascript:void(0)">Down</a>
+    </td>
+  </tr>
+  <tr>
+    <td class="borderless #DATA_CLASS#">
+      <a onclick="return multiList_add('#ATTR#', '#ATTR#_TEXT')" href="Javascript:void(0)">Add</a>
+       | <a onclick="return multiList_replace('#ATTR#', '#ATTR#_TEXT')" href="Javascript:void(0)">Replace</a>
+       | <a onclick="return multiList_remove('#ATTR#', '#ATTR#_TEXT')" href="Javascript:void(0)">Remove</a>
+       <maly-if var="CROSS_REFERENCE_VIEW{#ATTR#}">
+       | <a onclick="return cross_reference_view('#ATTR#', '#CROSS_REFERENCE_VIEW{#ATTR#}{OC}#', '#CROSS_REFERENCE_VIEW{#ATTR#}{FIELD}#')" href="Javascript:void(0)">
+	   View
+         </a>
+       </maly-if>
+    </td>
+    <td class="#DATA_CLASS# borderless">
+      &nbsp;
+    </td>
+  </tr>
+  <tr>
+    <td class="borderless #DATA_CLASS#" align=left colspan=2>
+      <input type="text" name="#ATTR#_TEXT" id="#ATTR#_TEXT" size="25"/>
+    </td>
+  </tr>
+</table>
+-->

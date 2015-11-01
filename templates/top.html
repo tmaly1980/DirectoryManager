@@ -1,0 +1,185 @@
+<html>
+<head>
+  <title>DirectoryManager #MODE# Entry</title>
+  <base href="#COMPLETE_HTML_BASE_PATH#/"/>
+  <link rel="stylesheet" type="text/css" href="style.css" />
+  <script language="JavaScript" src="core.js" type="text/javascript"></script>
+  <script language="JavaScript" src="DirectoryManager.js" type="text/javascript"></script>
+  <script>
+    function selectTree(sel)
+    {
+      var tree = get_field_value(sel);
+      document.location.href = "cgi-bin/Search.pl/"+tree;
+    }
+
+    function loadPage()
+    {
+      window.name = "DM_main";
+      #CUSTOM_ONLOAD#
+      set_select('tree', '#PATH_INFO{TREE}#', '#CONFIG{DEFAULT_TREE}#');
+      return;
+    }
+    #CUSTOM_SCRIPT#
+  </script>
+  <style>
+    #CUSTOM_STYLE#
+
+  </style>
+</head>
+<body onLoad="loadPage()">
+
+<table class="outer" align="center" border="0" cellpadding="0" cellspacing="0">
+<maly-if not=1 var="FORM{POPUP}">
+	<tr>
+		<td align="left">
+			<table border="0" cellpadding="5" cellspacing="0" width="100%">
+				<tr>
+					<td class="transparent" align="left">
+					  <maly-if var="ME">
+					    <maly-if var="ME{CN}">
+					  	<a href="#ME{EDIT_URL}#">#ME{CN}#</a>
+				            <maly-else/>
+					  	#ME{DN}# 
+					    </maly-if>
+
+					    |
+						<a href="#PATHINFO_URL#?action=Logout">Logout</a>
+					   
+					    <maly-if var="HAS_ADMIN_ACCESS">
+					    <br>
+					    (Administrator)
+					    <maly-elsif eval="'#HAS_MODERATOR_ACCESS#' and '#HAS_REQUESTOR_ACCESS#'"/>
+					    <br>
+					    (Moderator/Requestor)
+					    <maly-elsif var="HAS_REQUESTOR_ACCESS"/>
+					    <br>
+					    (Requestor)
+					    <maly-elsif var="HAS_MODERATOR_ACCESS"/>
+					    <br>
+					    (Moderator)
+					    </maly-if>
+				          <maly-else/>
+						<a href="#PATHINFO_URL#?action=Login">Login</a>
+					  </maly-if>
+					</td>
+					
+					<th class="transparent" align="right" valign=bottom>
+					  Directory Tree: 
+					  <select id="tree" onChange="selectTree(this);">
+					    <maly-loop var="KEYS:ROOTCONF" name="TREENAME:TREEREF" hash=1 sort="TREEREF{NAME}">
+					      <maly-if var="TREENAME" ne="_GLOBAL">
+					      <maly-if var="TREEREF{CONFIGURED}">
+					        <option value="#TREENAME#">
+					        <maly-if var="TREEREF{NAME}">
+					        #TREEREF{NAME}#
+					        <maly-else/>
+					          #TREENAME#
+					        </maly-if>
+					        <maly-if var="CONFIG{DEFAULT_TREE}" eq="#TREENAME#">
+					         (Default)
+					        </maly-if>
+					        <maly-if var="CONFIG{AUTH_TREE}" eq="#TREENAME#">
+					         (Auth)
+					        </maly-if>
+					        </option>
+					      </maly-if>
+				              </maly-if>
+					    </maly-loop>
+					  </select>
+
+						
+					</th>
+				</tr>
+			</table>
+		</td>
+	</tr>
+	<tr>
+		<td align="center">
+			<table border="0" cellpadding="0" cellspacing="0" width="100%">
+				<tr>
+					<td class="transparent" align="right">
+						<table align="right" border="0" cellpadding="0" cellspacing="0">
+							<tr>
+							  <maly-loop var="TABS" hash=1>
+							  <maly-if var="ACCESS" in="MIN_ACCESS_LEVEL{#CONFIG{MODULES}{#KEY#}{ACCESS}#}">
+							    <maly-set var="TAB_STYLE" eval=1>'#PATH_INFO{CLASS}#' eq '#KEY#' ? "selectedtab" : "unselectedtab"</maly-set>
+							    <td class="#TAB_STYLE#">
+							      <nobr>
+							      <a href="cgi-bin/Search.pl/#PATH_INFO{TREE}#/#KEY#">#TABS{#KEY#}#</a>
+							      </nobr>
+							    </td>
+							  </maly-if>
+							  </maly-loop>
+							  <maly-if eval="'#PATH_INFO{TREE}#' and '#CONFIG{AUTH_TREE}#' eq '#PATH_INFO{TREE}#' and '#HAS_ADMIN_ACCESS#'">
+							    <maly-set var="TAB_STYLE" eval=1>'#PATH_INFO{CLASS}#' eq 'aclgroup' ? "selectedtab" : "unselectedtab"</maly-set>
+							    <td class="#TAB_STYLE#">
+							    <nobr>
+							      <a href="cgi-bin/Search.pl/#PATH_INFO{TREE}#/aclgroup">Access Groups</a>
+							      </nobr>
+							    </td>
+
+							  </maly-if>
+							  <!--
+								<td class="selectedtab">
+									<a href="cgi-bin/Search/user">Users</a>
+								</td>
+								<td class="unselectedtab">
+									<a href="cgi-bin/Search/group">Groups</a>
+								</td>
+								-->
+							</tr>
+						</table>
+					</td>
+				</tr>
+				<tr>
+					<td class="navheader" align="center" width="100%">
+						<table border="0" cellpadding="5" cellspacing="0" width="100%">
+							<tr>
+								<td align="left">
+
+								  <maly-if var="PATH_INFO{CLASS}">
+								    <a href="cgi-bin/Search.pl/#PATH_INFO{TREE}#">
+								      #ROOTCONF{#PATH_INFO{TREE}#}{NAME}#
+								    </a>
+								    &gt;
+								    <a href="cgi-bin/Search.pl/#PATH_INFO{TREE}#/#PATH_INFO{CLASS}#">
+								      #CLASSREF{DISPLAY_TITLE}# 
+								    </a>
+								  </maly-if>
+								  <maly-if var="MODE" eq="Add">
+								    &gt; 
+								    <a href="#PATHINFO_URL#">Add</a>
+								  <maly-elsif var="MODE" eq="Request"/>
+								    &gt;
+								    <a href="#PATHINFO_URL#">Requests</a>
+								  <maly-elsif var="MODE" eq="Import"/>
+								    &gt;
+								    <a href="#PATHINFO_URL#">Import</a>
+								  <maly-elsif var="ENTRY"/>
+								      &gt;
+							            <a href="#ENTRY{VIEW_URL}#">#ENTRY{#CLASSREF{HEADER_KEY}#}#</a>
+								    <maly-if var="MODE" eq="Edit">
+								      &gt; 
+							              <a href="#ENTRY{EDIT_URL}#">Edit</a>
+								    </maly-if>
+								  </maly-if>
+								</td>
+								
+								<td align="right">
+									 <a href="cgi-bin/Browse.pl/#PATH_INFO{TREE}#/#PATH_INFO{CLASS}#">Browse</a>
+									 | <a href="cgi-bin/Search.pl/#PATH_INFO{TREE}#/#PATH_INFO{CLASS}#">Search</a>
+									 <maly-if eval="'#HAS_ADMIN_ACCESS#'">
+									 | <a href="cgi-bin/Request.pl/#PATH_INFO{TREE}#/#PATH_INFO{CLASS}#">Requests</a>
+									 </maly-if>
+									 <maly-if eval="'#HAS_ADMIN_ACCESS#'">
+									 | <a href="cgi-bin/Import.pl/#PATH_INFO{TREE}#/#PATH_INFO{CLASS}#">Import</a>
+									 | <a href="cgi-bin/Add.pl/#PATH_INFO{TREE}#/#PATH_INFO{CLASS}#">Add</a>
+									 <maly-elsif eval="'#HAS_REQUEST_ACCESS#'"/>
+									 | <a href="cgi-bin/Add.pl/#PATH_INFO{TREE}#/#PATH_INFO{CLASS}#">Add Request</a>
+									 </maly-if>
+								</td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+</maly-if>

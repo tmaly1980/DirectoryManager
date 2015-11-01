@@ -1,0 +1,104 @@
+<maly-set var="CUSTOM_ONLOAD">
+  set_field_default(f, 'SSL_VERSION', '#CONF{SSL}{VERSION}#','#DEFAULT{SSL}{VERSION}#', 'tlsv1');
+  set_field_default(f, 'SSL_VERIFY', '#CONF{SSL}{VERIFY}#','#DEFAULT{SSL}{VERIFY}#', 'optional');
+  set_field_default(f, 'SSL_CAPATH', '#CONF{SSL}{CAPATH}#','#DEFAULT{SSL}{CAPATH}#');
+  set_field_default(f, 'SSL_CAFILE', '#CONF{SSL}{CAFILE}#','#DEFAULT{SSL}{CAFILE}#');
+  set_field_default(f, 'SSL_CLIENTCERT', '#CONF{SSL}{CLIENTCERT}#','#DEFAULT{SSL}{CLIENTCERT}#');
+  set_field_default(f, 'SSL_CLIENTKEY', '#CONF{SSL}{CLIENTKEY}#','#DEFAULT{SSL}{CLIENTKEY}#');
+
+</maly-set>
+<maly-set var="CUSTOM_SUBMIT">
+
+</maly-set>
+<maly-set var="CUSTOM_STYLE">
+
+</maly-set>
+<maly-set var="CONTENT">
+
+  <div align=right> <a href="Javascript:void(0)" onClick="helpPopup('config/index.html#ssl');">HELP</a> </div>
+
+  <table border=0 cellspacing=0 cellpadding=3 class="config" width="75%" align=center>
+    <tr class="header">
+      <th valign=top class="header" width="20%">Option:</th>
+      <th valign=top class="header">Value:</th>
+      <maly-if var="TREE" ne="_GLOBAL"><th valign=top class="header">Inherit:</th></maly-if>
+    </tr>
+
+    <tr>
+      <th valign=top>Encryption:</th>
+      <td>
+        <nobr>
+        <input type=radio name="SSL_VERSION" value=0>None
+        <input type=radio name="SSL_VERSION" value="sslv2">SSLv2
+        <input type=radio name="SSL_VERSION" value="sslv3">SSLv3
+        <input type=radio name="SSL_VERSION" value="tlsv1">TLSv1
+        </nobr>
+      </td>
+      <maly-if var="TREE" ne="_GLOBAL"><td align=center valign=top><input type=checkbox name="INHERIT_SSL_VERSION" value=1></td></maly-if>
+    </tr>
+
+
+
+
+    <tr>
+      <th valign=top>SSL Peer Verification:</th>
+      <td>
+        <nobr>
+        <input type=radio name="SSL_VERIFY" value='none'>None
+        <input type=radio name="SSL_VERIFY" value='optional'>Optional
+        <input type=radio name="SSL_VERIFY" value='required'>Required
+	</nobr>
+      </td>
+      <maly-if var="TREE" ne="_GLOBAL"><td align=center valign=top><input type=checkbox name="INHERIT_SSL_VERIFY" value=1></td></maly-if>
+    </tr>
+
+
+
+    <tr>
+      <th valign=top>Certificate Authority (CA) Directory:</th>
+      <td>
+        <nobr>
+	  <input type=text name="SSL_CAPATH">
+	</nobr>
+      </td>
+      <maly-if var="TREE" ne="_GLOBAL"><td align=center valign=top><input type=checkbox name="INHERIT_SSL_CAPATH" value=1></td></maly-if>
+    </tr>
+
+    <tr>
+      <th valign=top>Certificate Authority (CA) File:</th>
+      <td>
+        <nobr>
+	  <input type=text name="SSL_CAFILE">
+	</nobr>
+      </td>
+      <maly-if var="TREE" ne="_GLOBAL"><td align=center valign=top><input type=checkbox name="INHERIT_SSL_CAFILE" value=1></td></maly-if>
+    </tr>
+
+    <tr> <td colspan=3 >&nbsp;</th> </tr>
+
+    <tr>
+      <th valign=top>Client SSL Certificate File:</th>
+      <td>
+        <nobr>
+	  <input type=text name="SSL_CLIENTCERT">
+	</nobr>
+      </td>
+      <maly-if var="TREE" ne="_GLOBAL"><td align=center valign=top><input type=checkbox name="INHERIT_SSL_CLIENTCERT" value=1></td></maly-if>
+    </tr>
+
+    <tr>
+      <th valign=top>Client SSL Certificate Private Key File:</th>
+      <td>
+        <nobr>
+	  <input type=text name="SSL_CLIENTKEY">
+	</nobr>
+      </td>
+      <maly-if var="TREE" ne="_GLOBAL"><td align=center valign=top><input type=checkbox name="INHERIT_SSL_CLIENTKEY" value=1></td></maly-if>
+    </tr>
+
+
+  </table>
+
+</maly-set>
+
+#include main

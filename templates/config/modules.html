@@ -1,0 +1,296 @@
+<maly-set var="CUSTOM_ONLOAD">
+  set_field(f.REQUEST_RECIPIENTS, '#CONF{REQUEST_RECIPIENTS}#');
+  set_field(f.REQUEST_FROM, '#CONF{REQUEST_FROM}#');
+  set_field(f.MODULE, '#MODULE#');
+  set_field_default(f, 'ACCESS', '#CONF{MODULES}{#MODULE#}{ACCESS}#', '#DEFAULT{MODULES}{#MODULE#}{ACCESS}#', 'ANON');
+  set_field_default(f, 'DEFAULT_ENTRY_TYPE', '#CONF{MODULES}{#MODULE#}{DEFAULT_ENTRY_TYPE}#', '#DEFAULT{MODULES}{#MODULE#}{DEFAULT_ENTRY_TYPE}#');
+  <maly-if var="MODULE" eq="user">
+    set_field_default(f, 'UIDNUMBER_START', '#CONF{MODULES}{user}{UIDNUMBER_START}#', '#DEFAULT{MODULES}{user}{UIDNUMBER_START}#', '10000');
+    set_field_default(f, 'UIDNUMBER_END', '#CONF{MODULES}{user}{UIDNUMBER_END}#', '#DEFAULT{MODULES}{user}{UIDNUMBER_END}#', '19999');
+
+    if ('#REF:TREECONF{MODULES}{USER}{HOMEDIR}#') // Set own copy. Not inheriting.
+    {
+      set_field(f.CREATE_HOME_DIRS, '#TREECONF{MODULES}{USER}{HOMEDIR}{CREATE}#','1');
+      set_field(f.CREATE_HOME_DIR_HOST, '#TREECONF{MODULES}{USER}{HOMEDIR}{HOST}#','localhost');
+      set_field(f.CREATE_HOME_DIR_PORT, '#TREECONF{MODULES}{USER}{HOMEDIR}{PORT}#','3890');
+      set_field(f.CREATE_HOME_DIR_SSL, '#TREECONF{MODULES}{USER}{HOMEDIR}{SSL}#','1');
+    } else { // Inheriting...
+      set_field(f.CREATE_HOME_DIRS, '#DEFAULT{MODULES}{USER}{HOMEDIR}{CREATE}#','1');
+      set_field(f.CREATE_HOME_DIR_HOST, '#DEFAULT{MODULES}{USER}{HOMEDIR}{HOST}#','localhost');
+      set_field(f.CREATE_HOME_DIR_PORT, '#DEFAULT{MODULES}{USER}{HOMEDIR}{PORT}#','3890');
+      set_field(f.CREATE_HOME_DIR_SSL, '#DEFAULT{MODULES}{USER}{HOMEDIR}{SSL}#','1');
+      set_field(f['INHERIT_HOMEDIR'], 1);
+    }
+
+  <maly-elsif var="MODULE" eq="group"/>
+    set_field_default(f, 'GIDNUMBER_START', '#CONF{MODULES}{group}{GIDNUMBER_START}#','#DEFAULT{MODULES}{group}{GIDNUMBER_START}#', '10000');
+    set_field_default(f, 'GIDNUMBER_END', '#CONF{MODULES}{group}{GIDNUMBER_END}#','#DEFAULT{MODULES}{group}{GIDNUMBER_END}#',  '19999');
+  </maly-if>
+
+  // Entry type defaults
+  <maly-loop var="CLASSREF{ENTRY_TYPES}" hash=1>
+    set_field(f.ENTRY_TYPE_#KEY#, '#CONF{MODULES}{#MODULE#}{ENTRY_TYPES}{#KEY#}#', '1');
+  </maly-loop>
+
+  if ('#LIST:CONF{MODULES}{#MODULE#}{ENTRY_TYPES}#' == '#LIST:DEFAULT{MODULES}{#MODULE#}{ENTRY_TYPES}#')
+  {
+    set_field(f['INHERIT_ENTRY_TYPES'], 1);
+  }
+  if ('#LIST:CONF{MODULES}{#MODULE#}{REQUIRED}#' == '#LIST:DEFAULT{MODULES}{#MODULE#}{REQUIRED}#')
+  {
+    set_field(f['INHERIT_REQUIRED'], 1);
+  }
+  if ('#LIST:CONF{MODULES}{#MODULE#}{MULTIPLE}#' == '#LIST:DEFAULT{MODULES}{#MODULE#}{MULTIPLE}#')
+  {
+    set_field(f['INHERIT_MULTIPLE'], 1);
+  }
+
+</maly-set>
+<maly-set var="CUSTOM_SCRIPT">
+  function checkBulkMigrate(f)
+  {
+    if (!f.MIGRATE_ENTRY_TYPE.selectedIndex) {
+      alert("MUST specify an entry type to migrate TO!");
+      f.MIGRATE_ENTRY_TYPE.focus();
+      return false;
+    }
+    else if (!f.AUTHDN.value)
+    {
+      alert("MUST specify Admin/Root DN!");
+      f.AUTHDN.focus();
+      return false;
+    } else if (!f.AUTHPW.value) {
+      alert("MUST specify Admin/Root Password!");
+      f.AUTHPW.focus();
+      return false;
+    }
+    return confirm('Are you SURE you want to alter the entry type for ALL the entries? Undoing this may require manually changing each and every entry!');
+  }
+  function loadModulePage(sel)
+  {
+    sel = get_field(sel);
+    val = get_field_value(sel);
+    document.location.href = '#ABSOLUTE_URL#/modules?tree=#FORM{TREE}#&module='+val;
+    return false;
+  }
+
+</maly-set>
+<maly-set var="CUSTOM_SUBMIT">
+    if (document.editForm.MULTIPLE)
+    {
+      selectSubmit('MULTIPLE');
+    }
+    if (document.editForm.REQUIRED)
+    {
+      selectSubmit('REQUIRED');
+    }
+</maly-set>
+<maly-set var="CONTENT">
+
+  <div align=right> <a href="Javascript:void(0)" onClick="helpPopup('config/index.html#modules');">HELP</a> </div>
+
+  <table class="config" cellspacing=0 width="100%" align=center>
+  <tr>
+    <th align=left>
+    Module:
+      <select name="MODULE" onChange="loadModulePage(this);">
+    <maly-loop var="MODULE_NAMES" hash=1>
+      <option value="#KEY#">#VALUE#</option>
+    </maly-loop>
+      </select>
+    </th>
+    <th align=right>
+    Minimum Access Level:
+	  <select name="ACCESS" id="ACCESS" onChange="loseInherit(this);">
+	  <option value="0"> Disabled</option>
+	  <option value="ANON"> Anonymous</option>
+	  <option value="USER"> Logged-In User</option>
+	  <option value="REQUESTOR"> Requestor</option>
+	  <option value="MODERATOR"> Moderator</option>
+	  <option value="ADMIN"> Admin</option>
+	  </select>
+	  <input type=checkbox name="INHERIT_ACCESS" value=1> Inherit
+  </th>
+  </tr>
+  </table>
+
+  <maly-if var="CONF{MODULES}{#MODULE#}{ACCESS}" ne="0">
+  <table border=1 cellspacing=0 cellpadding=3 class="config" width="100%" align=center>
+    <tr>
+      <th valign=top class="header" width="20%">Option:</th>
+      <th valign=top class="header">Value:</th>
+      <maly-if var="TREE" ne="_GLOBAL"><th valign=top class="header">Inherit:</th></maly-if>
+    </tr>
+
+  <maly-if var="CLASSREF{ENTRY_TYPES}">
+    <maly-set var="HAS_OPTIONS" value=1/>
+    <tr>
+      <th valign=top>Enabled Entry Types:</th>
+      <td align=left>
+        <table width="100%" align=left class="plain" border=0 cellspacing=0 cellpadding=2>
+       <maly-loop var="CLASSREF{ENTRY_TYPES}" hash=1>
+       <maly-set var="DATACLASS" eval="'#MALYITER#' % 2 == 0 ? 'data1' : 'data2'"/>
+	<tr class="#DATACLASS#">
+	  <td align=right>#VALUE{NAME}#:</td>
+	  <td><nobr><input type=radio name="ENTRY_TYPE_#KEY#" value=1>On</nobr></td>
+	  <td><nobr><input type=radio name="ENTRY_TYPE_#KEY#" value=0>Off</nobr></td>
+	</tr>
+	</maly-loop>
+      </td>
+      <maly-if var="TREE" ne="_GLOBAL"><td align=center valign=top><input type=checkbox name="INHERIT_ENTRY_TYPES" value=1></td></maly-if>
+    </tr>
+
+    <tr>
+      <th valign=top>Default Entry Type:</th>
+      <td>
+        <select name="DEFAULT_ENTRY_TYPE" id="DEFAULT_ENTRY_TYPE">
+        <maly-loop var="CLASSREF{ENTRY_TYPES}" hash=1>
+          <option value="#KEY#">#VALUE{NAME}#</option>
+	</maly-loop>
+	</select>
+      </td>
+      <maly-if var="TREE" ne="_GLOBAL"><td align=center valign=top><input type=checkbox name="INHERIT_DEFAULT_ENTRY_TYPE" value=1></td></maly-if>
+    </tr>
+
+    <maly-if var="TREE" ne="_GLOBAL">
+    <tr>
+      <th valign=top>Bulk Migration:</th>
+      <td>
+        To: <select name="MIGRATE_ENTRY_TYPE" id="MIGRATE_ENTRY_TYPE">
+	<option value=""> -- NO MIGRATION -- </option>
+        <maly-loop var="CLASSREF{ENTRY_TYPES}" hash=1>
+          <option value="#KEY#">#VALUE{NAME}#</option>
+	</maly-loop>
+	</select><br>
+	Admin (Root) DN: <input type=text name=AUTHDN size=20><br>
+	Admin (Root) Password: <input type=password name=AUTHPW size=20><br>
+	Optional LDAP Filter: <input type=text name=FILTER size=20><br>
+	<input type=submit name="action" value="Bulk Migrate" onClick="return checkBulkMigrate(this.form); ">
+      </td>
+      <maly-if var="TREE" ne="_GLOBAL"><td align=center valign=top>&nbsp;</td></maly-if>
+    </tr>
+    </maly-if>
+
+  </maly-if>
+
+  <maly-if var="MODULE" eq="user">
+    <maly-set var="HAS_OPTIONS" value=1/>
+    <tr>
+      <th valign=top>Starting User ID#:</th>
+      <td>
+        <nobr>
+	  <input type=text name="UIDNUMBER_START">
+	</nobr>
+      </td>
+      <maly-if var="TREE" ne="_GLOBAL"><td align=center valign=top><input type=checkbox name="INHERIT_UIDNUMBER_START" value=1></td></maly-if>
+    </tr>
+
+    <tr>
+      <th valign=top>Ending User ID#:</th>
+      <td>
+        <nobr>
+	  <input type=text name="UIDNUMBER_END">
+	</nobr>
+      </td>
+      <maly-if var="TREE" ne="_GLOBAL"><td align=center valign=top><input type=checkbox name="INHERIT_UIDNUMBER_END" value=1></td></maly-if>
+    </tr>
+
+    <br>
+
+    <tr>
+      <th valign=top>Create Home Directories:</th>
+      <td>
+        <input type=radio name="CREATE_HOME_DIRS" value=0>Disabled<br>
+        <input type=radio name="CREATE_HOME_DIRS" value=1>Enabled<br>
+      </td>
+      <maly-if var="TREE" ne="_GLOBAL"><td align=center valign=top><input type=checkbox name="INHERIT_CREATE_HOME_DIRS" value=1></td></maly-if>
+    </tr>
+    <tr>
+      <th valign=top>Home Directory Creation Settings:</th>
+      <td align=left>
+        <table class="plain" width="100%" cellspacing=0 align=left>
+	  <tr>
+	    <td align=right>
+	Password: 
+	    </td>
+	    <td align=left>
+	<input type=password name="CREATE_HOME_DIR_PASS">
+	    </td>
+	  </tr>
+	  <tr>
+	    <td align=right>
+	Hostname: 
+	    </td>
+	    <td align=left>
+	<input type=text name="CREATE_HOME_DIR_HOST">
+	    </td>
+	  </tr>
+	  <tr>
+	    <td align=right>
+	Port: 
+	    </td>
+	    <td align=left>
+	<input type=text name="CREATE_HOME_DIR_PORT">
+	    </td>
+	  </tr>
+	  <tr>
+	    <td align=right>
+	Use SSL: 
+	    </td>
+	    <td align=left>
+	<input type=checkbox name="CREATE_HOME_DIR_SSL" value="1">
+	    </td>
+	  </tr>
+	</table>
+	<maly-if not=1 var="CONF{MODULES}{user}{HOMEDIR}{PASS}"><span style="color: red; font-weight: bold">There is currently no password set!</span><maly-else/><span style="color: blue; font-weight: bold">The password is ALREADY set.</span></maly-if>
+      </td>
+      <maly-if var="TREE" ne="_GLOBAL"><td align=center valign=top><input type=checkbox name="INHERIT_HOMEDIR" value=1></td></maly-if>
+    </tr>
+  </maly-if>
+
+  <maly-if var="MODULE" eq="group">
+    <maly-set var="HAS_OPTIONS" value=1/>
+    <tr>
+      <th valign=top>Starting Group ID#:</th>
+      <td>
+        <nobr>
+	  <input type=text name="GIDNUMBER_START">
+	</nobr>
+      </td>
+      <maly-if var="TREE" ne="_GLOBAL"><td align=center valign=top><input type=checkbox name="INHERIT_GIDNUMBER_START" value=1></td></maly-if>
+    </tr>
+    <tr>
+      <th valign=top>Ending Group ID#:</th>
+      <td>
+        <nobr>
+	  <input type=text name="GIDNUMBER_END">
+	</nobr>
+      </td>
+      <maly-if var="TREE" ne="_GLOBAL"><td align=center valign=top><input type=checkbox name="INHERIT_GIDNUMBER_END" value=1></td></maly-if>
+    </tr>
+
+  </maly-if>
+
+  <maly-if not=1 var="HAS_OPTIONS">
+  <tr>
+    <maly-if var="TREE" eq="_GLOBAL">
+    <td colspan=3 valign=left>
+      <b>No options to customize.</b>
+    </td>
+    <maly-else/>
+    <td colspan=4 valign=left>
+      <b>No options to customize.</b>
+    </td>
+    </maly-if>
+  </tr>
+  </maly-if>
+  </table>
+#include required_fields
+#include custom_forms
+  <maly-else/>
+  Note: Enable access ('Minimum Access Level') to set options.
+  </maly-if>
+
+</maly-set>
+
+#include main

@@ -1,0 +1,80 @@
+<html>
+<head>
+  <!-- STEP 1: Copy from here to 'END STEP 1' -->
+  <script>
+    // MODIFY these next three lines to suit your needs
+    var search_base = 'http://192.168.1.110/DirectoryManager';
+    var tree = 'lpl';
+    var module = 'user';
+
+    document.write("<script src='"+search_base+"/core.js'><\/script>");
+    document.write("<script src='"+search_base+"/DirectoryManager.js'><\/script>");
+  </script>
+  <script>
+    var search_url = search_base+'/cgi-bin/Search.pl/'+tree+'/'+module;
+    var qstring = document.location.search;
+    if (qstring)
+    {
+      var url = search_url+qstring+"&embedded=1";
+      document.write("<script src='"+url+"'><\/script>");
+    }
+
+    function loadPage()
+    {
+      if (qstring)
+      {
+        fillForm();
+      }
+    }
+  </script>
+  <style>
+/* Adjust CSS below to suit your needs */
+table.dmresults { border: green solid 1px }
+th.dmheader { background-color: #A0A0A0; }
+th.dmresultscount { background-color: white; }
+th.dmheader_cn { width: 50px; }
+th.dmheader_title { width: 75px; }
+th.dmheader_phone { width: 50px; }
+th.dmheader_mail { width: 250px; }
+td.dmattr { }
+td.dmdata1 { background-color: #C0C0C0; }
+td.dmdata2 { background-color: #B0B0B0; }
+  </style>
+  <!-- END STEP 1 -->
+</head>
+<body onLoad="loadPage();">
+  <h1>Directory Manager Embedded Example</h1>
+  <p>* Please see the Integration documentation on how to properly embed Directory Manager into your web site. </p>
+
+  <!-- STEP 2: Copy to "END STEP 2" -->
+  <!-- Add search fields as desired. Empty values will be ignored -->
+  <form method="GET" action="embedded.html" name="DMSearchForm">
+    <table border=0>
+    <tr>
+      <th>First Name:</th>
+      <td><input type=text name="givenname"></td>
+    </tr>
+    <tr>
+      <th>Last Name:</th>
+      <td><input type=text name="sn"></td>
+    </tr>
+    <tr>
+      <th>Department:</th>
+      <td><input type=text name="ou"></td>
+    </tr>
+    <tr>
+      <td colspan=2>
+        <input type=submit name=action value="Search">
+      </td>
+    </tr>
+  </form>
+  <script>
+    if (document.location.search)
+    {
+      printResults();
+    }
+  </script>
+  <!-- END STEP 2 -->
+
+</body>
+</html>

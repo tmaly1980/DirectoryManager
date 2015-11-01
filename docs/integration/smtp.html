@@ -1,0 +1,41 @@
+<html>
+<head>
+  
+  <title>Directory Manager 2.0 Documentation: Mail Server Integration</title>
+  <link href="../style.css" rel="stylesheet" type="text/css"></link>
+</head>
+<body>
+  <p> 
+	Navigation:
+	<a href="../" name="top">Top</a> | <a href="./">Up</a> | <a href="Javascript:history.go(-1)">Back</a>
+  </p>
+
+  <p align="center" style="font-size: 20px; font-weight: bold">Directory Manager 2.0 Documentation: Mail Server Integration</p>
+  
+
+	<p>Directory Manager implements Mailing Lists using the 'nisMailAlias' schema, under the 'ou=Aliases,BASEDN' subtree of your respective Directory Tree. The mailing list name is provided by the 'cn' attribute and the member email (whether local such as 'john' or absolute email such as 'john@doe.com') is provided by one or more 'rfc822MailMember' attributes within the entry.</p>
+
+	<p>Directory Manager ALSO makes it feasible to use your mail server to provide ALIASES to users via their user entries. This is done by performing filters based upon the 'inetOrgPerson' objectClass (i.e.: '(objectClass=inetOrgPerson)'), and searching for the 'mail' attribute (which can be local or absolute in the form of 'user@domain', in which you'd want to have the LDAP filter: '(&(objectClass=inetOrgPerson)(mail=*@DOMAIN))'.
+
+	<p>For configuring your SMTP server for use with OpenLDAP and the Mailing List module as provided by Directory Manager, please consult the links below, depending on your SMTP server implementation. These links are provided by third parties, and is not provided by Maly Soft. Note that other mail servers MAY suppot LDAP, but merely are not linked below.</p>
+
+	<ul>
+	<li style=''>
+	<a href="http://www.redant.ca/consulting/ldap/postfix.php">Postfix</a>
+	</li>
+	<li style=''>
+	<a href="http://www.sendmail.org/m4/ldap.html">Sendmail</a>: NOTE that the filters/objectClasses and attributes searched for differ, as noted above.
+	</li>
+	<li style=''>
+	<a href="http://www.lifewithqmail.org/ldap/">Qmail</a>
+	</li>
+	<li style=''>
+	<a href="http://www.exim.org/">Exim</a>: Unfortunately a separate HowTo could not be found.
+	</li>
+	</ul>
+
+	</p>
+
+  <p align="center">Copyright &copy; 2004-2005 <a href="http://www.malysoft.com/">Maly Soft</a></p>
+</body>
+</html>

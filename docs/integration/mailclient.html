@@ -1,0 +1,56 @@
+<html>
+<head>
+  
+  <title>Directory Manager 2.0 Documentation: Mail Client Integration</title>
+  <link href="../style.css" rel="stylesheet" type="text/css"></link>
+</head>
+<body>
+  <p> 
+	Navigation:
+	<a href="../" name="top">Top</a> | <a href="./">Up</a> | <a href="Javascript:history.go(-1)">Back</a>
+  </p>
+
+  <p align="center" style="font-size: 20px; font-weight: bold">Directory Manager 2.0 Documentation: Mail Client Integration</p>
+  
+	<p>Mail clients can be configured to query LDAP servers for an integrated address book solution. You can also perform email auto-completion based upon typing in a person's name. Most mail clients support LDAP, please consult the respective documentation if not discussed below.</p>
+
+	<ul>
+	<li style=''>Outlook:
+	  <p>Note: In this situation, Outlook is configured in 'Internet-Only' mode. Configuration may differ otherwise.</p>
+
+	  <ol>
+		<li style=''>
+		Click on 'Tools->Accounts', then 'Add->Directory Service'.
+		</li>
+		<li style=''>
+		Enter in the hostname, then check 'Yes' for 'checking addresses using this directory service'. 
+		</li>
+		<li style=''>
+		Go back to the 'Internet Accounts' tab, and click on the 'Directory Service' tab, then click on the new server and then 'Properties'. Mark 'check names against this server when sending mail', and then set the search base (under the 'Advanced' tab) to your respective base DN. Make sure 'Use simple search filter' is checked. Close the Properties window as well as the Accounts window.
+		</li>
+		<li style=''>
+		You can then enable auto-complete via 'Tools->Options->Preferences->E-mail Options->Advanced E-mail Options->Automatic name checking' (enabled by default).
+	  </li></ol>
+
+	  <p>You can then do auto-complete during an email by typing in a person's (partial) name, and then pressing tab to move to the next field. If it is found, it will become underlined. Otherwise, the address was not found. If underlined in red, multiple were found -- right-click on the name to choose the exact match.
+	  </p>
+	  <p>You can add multiple people to an email by clicking on the respective 'To', 'Cc' or 'Bcc' button, then clicking on 'Find', and then selecting your directory server in the 'Look In' field.
+	  </p>
+	</li>
+
+	<li style=''>Mozilla Mail:
+	  <ol>
+		<li style=''>Go to your Preferences via 'Edit->Preferences', and then click on 'Mail & Newsgroups' then 'Addressing'.</li>
+		<li style=''>Mark the checkbox 'Directory Server' and click on 'Edit Directories'.</li>
+		<li style=''>Click on 'Add', and type in the corresponding information of your LDAP server (which may differ from your Directory Manager server). Exit your preferences by clicking on 'OK' twice.</li>
+		<li style=''>It may be required to enable LDAPv2 on your OpenLDAP server if Mozilla is older than 1.7a. Either upgrade or follow the instructions in the OpenLDAP Server Configuration section on enabling LDAPv2 binds.</li>
+	  </ol>
+
+	  <p>You should then be able to use your LDAP server within the email auto-completion as well as your Mozilla Address Book.
+	</p></li>
+	</ul>
+	
+
+  <p align="center">Copyright &copy; 2004-2005 <a href="http://www.malysoft.com/">Maly Soft</a></p>
+</body>
+</html>

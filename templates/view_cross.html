@@ -1,0 +1,2 @@
+<maly-set var="SRCVALS">new Array(<maly-loop var='LINKS{#ATTR#}{SRCKEY}' name='SK'>'#ENTRY{#SK#}#'<maly-if var='MALYITER' ne='#MALYLASTITER#'>, </maly-if></maly-loop>)</maly-set>
+<a href="Javascript:void(0)" onClick="return link_search('#PATH_INFO{TREE}#', '#LINKS{#ATTR#}{DESTOC}#', '#LINKS{#ATTR#}{DESTKEY}#', #SRCVALS#);">View</a>

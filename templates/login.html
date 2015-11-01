@@ -1,0 +1,105 @@
+<html>
+<head>
+  <title>Directory Manager Login</title>
+  <base href="#COMPLETE_HTML_BASE_PATH#/"/>
+  <link rel="stylesheet" type="text/css" href="style.css" />
+  <script src="core.js"></script>
+  <script>
+  function loadPage()
+  {
+    if ('#PATH_INFO{TREE}#')
+    {
+      set_field(document.loginForm.tree, '#PATH_INFO{TREE}#');
+    } else {
+      set_field(document.loginForm.tree, '#CONFIG{DEFAULT_TREE}#', '#CONFIG{AUTH_TREE}#');
+    }
+
+  }
+  </script>
+</head>
+<body onLoad="loadPage();">
+  <form method="POST" action="#PATHINFO_URL#" name="loginForm">
+  
+  <table align=center cellpadding=5 cellspacing=0 border=0>
+    <maly-if var="MSG">
+    <tr>
+      <th  class="transparent" colspan="3" style="color: red; font-weight: bold">
+        #MSG#
+      </th>
+    </tr>
+    </maly-if>
+
+    <tr>
+      <th colspan="3" class="header">
+        Directory Manager Login
+      </th>
+    </tr>
+
+    <tr>
+      <td align="right" class="input">
+        Tree:
+      </td>
+      <td align="left" class="input">
+        <select name="tree">
+	  <maly-loop var="KEYS:ROOTCONF" name="TREENAME:TREEREF" hash=1 sort="TREEREF{NAME}">
+	    <maly-if var="TREENAME" ne="_GLOBAL">
+		<maly-if var="TREEREF{CONFIGURED}">
+		  <option value="#TREENAME#">
+		  <maly-if var="TREEREF{NAME}">
+		    #TREEREF{NAME}#
+		  <maly-else/>
+		    #TREENAME#
+		  </maly-if>
+		  <maly-if var="CONFIG{DEFAULT_TREE}" eq="#TREENAME#">
+		    (Default)
+		  </maly-if>
+		  <maly-if var="CONFIG{AUTH_TREE}" eq="#TREENAME#">
+		    (Auth)
+		  </maly-if>
+		  </option>
+		</maly-if>
+	    </maly-if>
+	  </maly-loop>
+	</select>
+      </td>
+      <td class="input">
+        <input type=submit name="action" value="Anonymous Login">
+      </td>
+    </tr>
+
+
+    <tr>
+      <td align="right" class="input">
+        Username/DN:
+      </td>
+      <td align="left" class="input">
+        <input type="text" name="username"  size="20" />
+      </td>
+      <td class="input">
+        <input type="submit" name="action" value="Login" />
+      </td>
+    </tr>
+    <tr>
+      <td align="right" class="input">
+        Password:
+      </td>
+      <td align="left" class="input">
+        <input type="password" name="passwd"  size="20" />
+      </td>
+      <td class="input">
+        &nbsp;
+      </td>
+    </tr>
+
+
+	<tr>
+	  <td colspan=3 align=right class="transparent">
+	    <a href="docs/" target="_new">Documentation</a> |
+	    <a href="admin/" target="_new">Administration</a>
+	  </td>
+	</tr>
+  </table>
+  </form>
+
+</body>
+</html>

@@ -1,0 +1,49 @@
+<maly-text>
+// Here, write results to array.
+var results = new Array();
+<maly-loop var="RESULTS" name="ENTRY">
+results[#MALYITER#] =
+  [
+    <maly-loop var="COLUMNS" name="COL">"#COL#", "#ENTRY{#COL#}#"<maly-if var="MALYITERNUM" lt="#MALYLOOPLENGTH#">,</maly-if>
+    </maly-loop>
+  ];
+</maly-loop>
+
+function printResults()
+{
+<maly-text type=js name="content">
+<table class="dmresults" cellspacing=0>
+<tr>
+  <th align=left colspan="#SCALAR:COLUMNS#" class="dmresultscount">
+    #SCALAR:RESULTS# Results
+  </th>
+</tr>
+<tr>
+  <maly-loop name="ATTR" var="COLUMNS">
+  <th class="dmheader dmheader_#ATTR#">#HEADER{#ATTR#}#</th>
+  </maly-loop>
+</tr>
+<maly-loop var="RESULTS" name="ENTRY">
+<maly-set var="DATACLASS" eval="'#MALYITER#' % 2 == 0 ? 'dmdata1' : 'dmdata2'"/>
+<tr>
+  <maly-loop name="ATTR" var="COLUMNS">
+  <td align=center class="dmattr dmattr_#ATTR# #DATACLASS#">#ENTRY{#ATTR#}# </td>
+  </maly-loop>
+</tr>
+</maly-loop>
+</table>
+</maly-text>
+
+  document.write(content);
+}
+
+function fillForm()
+{
+  <maly-loop var="FORM" hash=1>
+    if (document.DMSearchForm['#LC:KEY#'])
+    {
+      document.DMSearchForm['#LC:KEY#'].value = '#VALUE#';
+    }
+  </maly-loop>
+}
+</maly-text>

@@ -1,0 +1,134 @@
+<maly-set var="CUSTOM_ONLOAD">
+  set_checkbox(f.CLASSES, '#LIST:TREE{CLASSES}#', null, 1);
+
+</maly-set>
+
+<maly-set var="CUSTOM_SCRIPT">
+function verifyDeleteProfile()
+{
+  return confirm("Are you SURE you want to delete this profile '#PATH_INFO_ARRAY[1]#'? Access control provided through this profile will be revoked immediately.");
+}
+</maly-set>
+
+<maly-set var="CUSTOM_SUBMIT">
+  selectSubmit(f.assigned_trees);
+</maly-set>
+<maly-set var="CUSTOM_STYLE">
+
+</maly-set>
+<maly-set var="CONTENT">
+
+ <div align=right>
+   <a href="Javascript:void(0)" onClick="helpPopup('config/acl_profile.html');">HELP</a>
+ </div>
+
+<input type=hidden name="add" value="#FORM{ADD}#">
+<maly-if var="SAVED">
+<div style="font-size: 12px; color: red">
+In order for changes to take effect, you must regenerate and redistribute the DMACL.conf file as done under the 'Access Control' tab.
+</div>
+</maly-if>
+Edit Profile:
+
+  <table border=1 style="border-style: solid" cellspacing=0 cellpadding=3 class="config" align=center>
+
+    <tr class="config">
+      <th align=right><span class="required">Profile Name</span></th>
+      <td>
+        <input type=text name="PROFILE_NAME" value="#PROFILE_NAME#">
+      </td>
+    </tr>
+
+    <tr class="config">
+      <th align=right><span class="required">Assigned Trees</span></th>
+      <td>
+        <select multiple=multiple name="assigned_trees" id="assigned_trees" size=4 style="width: 150px" onChange="return multiList_edit('assigned_trees');">
+	  <maly-loop var="TREENAMES" name="TREENAME">
+	    <maly-if var="PROFILE_NAME" in="TREES{#TREENAME#}{ACL_PROFILE}">
+	      <option value="#TREENAME#">#TREENAME#</option>
+	    </maly-if>
+	  </maly-loop>
+	</select>
+	<br>
+	  <a href="Javascript:void(0)" onClick="multiList_prompt_add('assigned_trees');">Add</a> |
+	  <a href="Javascript:void(0)" onClick="multiList_remove('assigned_trees');">Remove</a>
+      </td>
+    </tr>
+
+    <!--
+    <tr class="config">
+      <th align=right><span class="required">Administrator DN</span></th>
+      <td>
+        <input type=text name="ADMIN_DN" value="#PROFILE{ADMIN_DN}#" >
+      </td>
+    </tr>
+    -->
+
+    <tr class="config">
+      <th align=right><span class="required">Administrative Group</span></th>
+      <td>
+        <input type=text name="ADMIN_GROUP" value="#PROFILE{ADMIN_GROUP}#">
+      </td>
+    </tr>
+
+
+    <tr class="config">
+      <th align=right><span class="required">Moderator Group</span></th>
+      <td>
+        <input type=text name="MODERATOR_GROUP" value="#PROFILE{MODERATOR_GROUP}#">
+      </td>
+    </tr>
+
+    <tr class="config">
+      <th align=right><span class="required">Requestor Group</span></th>
+      <td>
+        <input type=text name="REQUESTOR_GROUP" value="#PROFILE{REQUESTOR_GROUP}#" >
+      </td>
+    </tr>
+
+    <maly-loop var="MODULE_NAMES" hash=1 name="NAME:MODULE">
+    <tr><td colspan=3 style="border-width: 0px 0px 0px 0px">&nbsp;</td></tr>
+
+    <tr><td colspan=3 style="border-width: 0px 0px 0px 0px">#MODULE# Module:</td></tr>
+    <tr class="config">
+      <th align=right><span class="required">Administrative Group</span></th>
+      <td>
+        <input type=text name="#NAME#_ADMIN_GROUP" value="#PROFILE{#NAME#_ADMIN_GROUP}#">
+      </td>
+    </tr>
+
+    <tr class="config">
+      <th align=right><span class="required">Moderator Group</span></th>
+      <td>
+        <input type=text name="#NAME#_MODERATOR_GROUP" value="#PROFILE{#NAME#_MODERATOR_GROUP}#">
+      </td>
+    </tr>
+
+    <tr class="config">
+      <th align=right><span class="required">Requestor Group</span></th>
+      <td>
+        <input type=text name="#NAME#_REQUESTOR_GROUP" value="#PROFILE{#NAME#_REQUESTOR_GROUP}#">
+      </td>
+    </tr>
+
+    </maly-loop>
+
+  </table>
+
+  <div class="required">
+   * = Required Information
+  </div>
+
+  <maly-if var="PATH_INFO_ARRAY[2]">
+  <div style="padding-top: 20px" align=right>
+    <input type=submit name="action" value="Delete Profile From Configuration" style="color: red; font-weight: bold" onClick="return verifyDeleteProfile();">
+  </div>
+  </maly-if>
+
+  <div style="padding-top: 20px">
+    <a href="#URL#/acl">Go Back To Main Menu</a>
+  </div>
+
+</maly-set>
+
+#include main

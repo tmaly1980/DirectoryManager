@@ -1,0 +1,26 @@
+<html>
+<head>
+  
+  <title>Directory Manager 2.0 Documentation: Embedding Directory Manager</title>
+  <link href="../style.css" rel="stylesheet" type="text/css"></link>
+</head>
+<body>
+  <p> 
+	Navigation:
+	<a href="../" name="top">Top</a> | <a href="./">Up</a> | <a href="Javascript:history.go(-1)">Back</a>
+  </p>
+
+  <p align="center" style="font-size: 20px; font-weight: bold">Directory Manager 2.0 Documentation: Embedding Directory Manager</p>
+  
+	<p>Directory Manager can be embedded into your own web pages from any web server that can access the Directory Manager web server. This is done through a CGI-based Javascript search form.</p>
+
+	<p>With Directory Manager, is an example web page called 'embedded.html' that shows the basic functionality of our embedded solution. To properly embed Directory Manager within your web site, follow the following tasks (this assumes you already have a web page you wish to insert the form into):</p>
+	<ol>
+	<li style=''>Copy the content between the 'STEP 1' and 'END STEP 1' into your 'head' tag. This will insert any styles for the results table, as well as properly query the directory. Modify the parameters near the top to connect to the correct LDAP directory. Also, modify the styles to suit your needs (you can view 'templates/embedded_search.txt' to see how they are used).</li>
+	<li style=''>Copy the content between the 'STEP 2' and 'END STEP 2' into your HTML document body, to properly insert the search form and results.</li>
+	</ol>
+	
+
+  <p align="center">Copyright &copy; 2004-2005 <a href="http://www.malysoft.com/">Maly Soft</a></p>
+</body>
+</html>

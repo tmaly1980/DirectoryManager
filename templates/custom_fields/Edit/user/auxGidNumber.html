@@ -1,0 +1,12 @@
+<maly-if var="CONFIG{IMPLICIT_LINK}">
+  <select style="width: 100%; height: 100px" multiple=multiple name="#ATTR#" id="#ATTR#">
+  <maly-loop var="ENTRY{#ATTR#}" name="SUBENTRY" sort="gidNumber">
+    <option value="#SUBENTRY{#LINKS{#ATTR#}{VALKEY}#}#">##SUBENTRY{gidNumber}# (#SUBENTRY{cn}#)</option>
+  </maly-loop>
+  </select><br>
+  <a href="Javascript:void(0)" onClick="return multiList_prompt_add('#ATTR#', '#PROMPT{#ATTR#}#');">Add</a> |
+  <a href="Javascript:void(0)" onClick="return multiList_prompt_replace('#ATTR#', '#PROMPT{#ATTR#}#');">Replace</a> |
+  <a href="Javascript:void(0)" onClick="return multiList_remove('#ATTR#');">Remove</a>
+<maly-else/>
+#include edit_cross
+</maly-if>

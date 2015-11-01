@@ -1,0 +1,591 @@
+<maly-set var="CUSTOM_ONLOAD">
+  if (document.searchForm)
+  {
+        set_select(document.searchForm.field, "#QUERY{FIELD}#");
+        set_select(document.searchForm.regex, "#QUERY{REGEX}#");
+        set_select('entries_per_page', "#FORM{ENTRIES_PER_PAGE}#");
+  <maly-if var="FORM{ADVANCED}">
+    set_multiselect('show_cols', '#LIST_COMMA:FORM{SHOW_COLS}#', '#LIST_COMMA:CLASSREF{SEARCH}#');
+  </maly-if>
+  }
+
+  var any_checked = 0;
+  for (var i = 0; i < '#SCALAR:RESULTS#'; i++)
+  {
+    var chk = get_field('select_'+i);
+    if (chk && chk.checked)
+    {
+      any_checked = 1;
+    }
+  }
+
+  if (! any_checked)
+  {
+    hideSection('bulkchange_form'); 
+  }
+
+</maly-set>
+
+<maly-set var="CUSTOM_SCRIPT">
+  // Define prompts
+  var prompts = new Array();
+  <maly-loop var="PROMPT" hash=1>
+    prompts['#KEY#'] = "#VALUE#";
+  </maly-loop>
+
+  // Define booleans
+  var booleans = new Array();
+  <maly-loop var="BULK_CHANGE{BOOLEAN}" name="BOOLATTR">
+    booleans["#BOOLATTR#"] = 1;
+  </maly-loop>
+
+  // Define checkboxers
+  var checkboxers = new Array();
+  <maly-loop var="BULK_CHANGE{CHECKBOXES}" hash=1>
+    <maly-set var="ATTR" from="KEY"/>
+    <maly-set var="PROMPTS" from="VALUE"/>
+      checkboxers["#ATTR#"] = new Array();
+    <maly-loop var="PROMPTS" hash=1>
+      checkboxers["#ATTR#"]["#KEY#"] = "#VALUE#";
+    </maly-loop>
+  </maly-loop>
+
+
+function verifyDelete()
+{
+  return confirm("Are you SURE you want to delete the checked entries? No recovery is possible!");
+}
+
+function bulk_replace_all(check, sel)
+{
+  check = get_field(check);
+  sel = get_field(sel);
+  if (sel.selectedIndex == -1 && check.checked)
+  {
+    alert("Must select a field in the top right-hand list.");
+    return false;
+  }
+  var opt = sel.options[sel.selectedIndex];
+  var optparts = opt.value.split(":");
+  optparts[2] = check.checked ? 1 : 0;
+  opt.value = optparts.join(":");
+  //sel.selectedIndex = -1;
+  //check.checked = 0;
+  return;
+}
+
+function bulk_replace_edit(sel, check)
+{
+  check = get_field(check);
+  sel = get_field(sel);
+  if (sel.selectedIndex == -1) { check.checked = 0; return; }
+  var opt = sel.options[sel.selectedIndex];
+  var optval = opt.value.split(":");
+  if(optval[2] == 1)
+  {
+    check.checked = 1;
+  } else {
+    check.checked = 0;
+  }
+  return;
+}
+
+function bulk_set(dest,sel,otherdest)
+{
+  var is_rm = arguments[3];
+  dest = get_field(dest);
+  otherdest = get_field(otherdest);
+  sel = get_field(sel);
+  if (sel.selectedIndex == -1)
+  {
+    alert("Must select a field name in the left list.");
+    return false;
+  }
+  var attropt = sel.options[sel.selectedIndex];
+  var attr = attropt.value;
+  var all = 0;
+
+  // Need to check if field is single valued, and if in list already...
+  // and if so, replace rather than add a new value!!!
+  var multiples = new Array();
+  var subrec = new Array();
+  <maly-loop var="MULTIPLE" name="ATTR">
+    multiples["#ATTR#"] = 1;
+  </maly-loop>
+  <maly-loop var="LINKS" hash=1>
+    subrec["#KEY#"] = 1;
+  </maly-loop>
+
+  var ix = dest.length; // Where to put it.
+
+  var val;
+  if (booleans[attr])
+  {
+    val = 1;
+  }
+  else if (is_rm && multiples[attr])
+  {
+    val = prompt("Enter in a value to remove, or keep blank to remove all: ");
+  }
+  else if (is_rm && subrec[attr])
+  {
+    val = prompt("Enter in a value to remove: ");
+    if (!val) { return; }
+  }
+  else if (is_rm && !multiples[attr]) // Single-value field, cant specify value
+  {
+    val = "";
+  } else {
+    var prompt_text = prompts[attr] || "Enter in a value: ";
+    val = prompt(prompt_text);
+  }
+  if (!val && !is_rm) { return; }
+
+  // Single values cant be in BOTH lists!
+  for (var k = 0; k < otherdest.options.length; k++)
+  {
+    var otherdestparts = otherdest.options[k].value.split(":");
+    if (otherdestparts[0] == attr && !multiples[attr] && !subrec[attr])
+    {
+      var cont = confirm("Single-value attribute already in other list. Do you wish to remove?");
+      if (!cont)
+      {
+        return;
+      } else { // Remove from old list.
+        otherdest.options[k] = null;
+      }
+    }
+  }
+
+  // Single values cant have duplicates!
+  // Multiple vals cant have duplicates, either, if 'replace all' set
+  for (var j = 0; j < dest.options.length; j++)
+  {
+    var destparts = dest.options[j].value.split(":");
+    if (destparts[0] == attr && ! multiples[attr] && !subrec[attr])
+    {
+      ix = j; // Already found, put there instead
+      var cont = confirm("Duplicate single-value attribute. Replace?");
+      if (!cont)
+      {
+        return;
+      }
+      break;
+    } else if (destparts[0] == attr && destparts[2] == 1) {
+      ix = j; // Already found, put there instead
+      var cont = confirm("Duplicate multi-value attribute with 'replace all' set. Replace?");
+      if (!cont) { return; }
+      all = 1;
+      break;
+    }
+  }
+
+  var destval = attr + ":" + val + ":" + all;
+  dest.options[ix] = new Option(attropt.text, destval);
+  sel.selectedIndex = -1;
+  return;
+}
+
+function bulk_change(sel)
+{
+  sel = get_field(sel);
+  if (sel.selectedIndex == -1)
+  {
+    alert("Please select a field from the right-side list.");
+    return false;
+  }
+
+  var opt = sel.options[sel.selectedIndex];
+  var optval = opt.value.split(":");
+  if (booleans[optval[0]])
+  {
+    alert("Field is boolean, can only be set or removed.");
+    return;
+  }
+
+  var newval = prompt("Enter in a new value: ", optval[1]);
+  optval[1] = newval;
+  opt.value = optval.join(":");
+
+  sel.selectedIndex = -1;
+  return;
+}
+
+function bulk_remove(sel)
+{
+  sel = get_field(sel);
+  if (sel.selectedIndex == -1)
+  {
+    alert("Please select a field from the right-side list.");
+    return false;
+  }
+
+  sel.options[sel.selectedIndex] = null;
+  return;
+}
+
+
+function formSubmitSearch(f)
+{
+  if ('#FORM{ADVANCED}#')
+  {
+    selectSubmit('values');
+  }
+  return true;
+}
+
+function formSubmitChange(f)
+{
+  selectSubmit('set');
+  selectSubmit('unset');
+  return true;
+}
+
+function toggle_bulkChange()
+{
+  var any_checked = 0;
+  for (var i = 0; i < '#SCALAR:RESULTS#'; i++)
+  {
+    var chk = get_field('select_'+i);
+    if (chk && chk.checked)
+    {
+      any_checked = 1;
+    }
+  }
+  //if (any_checked)
+  //{
+    showSection('bulkchange_form'); 
+  //} else {
+  //  hideSection('bulkchange_form'); 
+  //}
+}
+
+</maly-set>
+
+<maly-if var="FORM{SORT}" defined=1>
+  <maly-set var="SORT" from="FORM{SORT}"/>
+<maly-else/>
+  <maly-set var="SORT" value="#COLUMNS[0]#"/>
+</maly-if>
+
+<maly-set var="COLMIN1" eval=1 value=" '#SCALAR:COLUMNS#' - 1"/>
+
+
+<maly-if var="FORM{DESC}">
+  <maly-set var="DESC{#SORT#}" value=""/>
+  <maly-set var="REVERSE" value=1/>
+<maly-else/>
+  <maly-set var="DESC{#SORT#}" value=1/>
+  <maly-set var="REVERSE" value=""/>
+</maly-if>
+
+<maly-set var="CONTENT">
+        <maly-if var="MODE" eq="Search">
+	<maly-if var="FORM{POPUP}" not=1>
+        <tr>
+          <td class="panel" align="center" valign="top">
+            <form method="post" action="cgi-bin/Search.pl/#PATH_INFO{TREE}#/#PATH_INFO{CLASS}#" name="searchForm" enctype="multipart/form-data" onSubmit="return formSubmitSearch(this);">
+	    <input type=hidden name=advanced value="#FORM{ADVANCED}#">
+            <table class="searchform" align="center" border="0" cellpadding="5" cellspacing="0">
+              <tr>
+                <th class="header" align="left" colspan="1">
+		  <a href="#PATHINFO_URL#?advanced=#FORM{ADVANCED}#">
+                  Search #DISPLAY_TITLE#
+		  </a>
+                </th>
+		<th align=right class="header">
+		  <maly-if var="FORM{ADVANCED}" not=1>
+		  <a href="#PATHINFO_URL#?advanced=1">Advanced Search</a>
+		  <maly-else/>
+		  <a href="#PATHINFO_URL#">Simple Search</a>
+		  </maly-if>
+		</th>
+              </tr>
+              <tr>
+                <td class="input" align="center">
+                  <select name="field">
+                  <maly-loop var="SEARCH_FIELDS" hash=1>
+                    <option value="#KEY#">#VALUE#</option>
+                  </maly-loop>
+                  </select>
+                </td>
+                
+                <td class="input" align="center">
+                  Value: <input type="text" name="value"  size="25" value="#QUERY{VALUE}#"/>
+                </td>
+              </tr>
+              <tr>
+                <td class="input" align="center" valign=top>
+                  <select name="regex">
+                  <option value="*X*">contains</option>
+                  <option value="X">is</option>
+                  <option value="X*">starts with</option>
+                  <option value="*X">ends with</option>
+                  </select>
+                </td>
+
+		<td align=center class="input" valign=top>
+	          <maly-if var="FORM{ADVANCED}">
+		    <span style="font-weight: bold">- OR ANY VALUE IN LIST -</span>
+		    <br>
+		    <select name="values" id="values" multiple=multiple style="height: 100px; width: 100%">
+		    <maly-if var="FORM{VALUES}">
+		    <maly-loop var="FORM{VALUES}" name="VAL">
+		      <option value="#VAL#">#VAL#</option>
+		    </maly-loop>
+		    </maly-if>
+		    </select>
+		    <br>
+		    <a href="Javascript:void(0)" onClick="multiList_prompt_add('values')">Add</a> | 
+		    <a href="Javascript:void(0)" onClick="multiList_remove('values')">Remove</a>
+		  <maly-else/>
+		    &nbsp;
+		  </maly-if>
+		</td>
+              </tr>
+	      <maly-if var="FORM{ADVANCED}">
+	      <tr>
+	        <td class="input" align="center" colspan=2>
+		    <span style="font-weight: bold">- OR -</span>
+		</td>
+	      </tr>
+	      <tr>
+	        <td class="input" align="right">
+		<a href="http://www.ietf.org/rfc/rfc2254.txt" target="_new">LDAP Filter:</a>
+		</td>
+
+		<td class="input" align="center">
+                  <input type="text" name="explicit_filter"  size="30" value="#FORM{EXPLICIT_FILTER}#"/>
+		<td>
+	      </tr>
+	      <!--
+	      <tr>
+	        <td colspan=2 class="input">
+	        <table border=0 width="100%" class="input">
+		<tr class="input">
+		  <td align=left> Show Columns (Ctrl+Shift): </td>
+		</tr>
+		<tr class="input">
+		  <td>
+		  <select multiple=multiple size="5" style="width: 100%" name="show_cols" id="show_cols">
+		  <maly-loop var="CLASSREF{HEADER}" hash=1>
+		    <maly-if var="KEY" in="ENABLED_COLUMNS">
+		      <option value="#KEY#">#VALUE# (#KEY#)</option>
+		    </maly-if>
+		  </maly-loop>
+		  </select>
+		  <input type="hidden" name="advanced" value="#FORM{ADVANCED}#">
+		  </td>
+		</tr>
+		</table>
+		</td>
+	      </tr>
+	      -->
+	      <tr>
+	        <td class="input" align="left" colspan=2>
+		<input type=checkbox name="export2csv" value=1 onChange="if (this.checked) { set_select('entries_per_page', '-1'); }">Export to Excel/CSV (tab-separated)
+		</td>
+	      </tr>
+	      </maly-if>
+	      <tr>
+	        <td class="input" align="right" colspan=2>
+		</td>
+	      </tr>
+	      <tr>
+                <td colspan=2 class="input" align="right">
+                  Results Per Page: <select name="entries_per_page" id="entries_per_page">
+                  <option value="10">10</option>
+                  <option value="25">25</option>
+                  <option value="50">50</option>
+                  <option value="100">100</option>
+                  <option value="200">200</option>
+                  <option value="-1">All</option>
+                  </select>
+                  <input type="hidden" name="oc" value="#PATH_INFO{CLASS}#" />
+                  <input type="submit" name="action" value="Search" />
+                  <input type="submit" name="action" value="I'm Feeling Lucky" />
+                </td>
+              </tr>
+            </table>
+            </form>
+          </td>
+        </tr>
+	</maly-if>
+        </maly-if>
+
+
+	<maly-if eval="('#FORM{ACTION}#' eq 'Search' or '#MODE#' eq 'Browse' or ('#MODE#' eq 'Search' and '#PATH_INFO{FILTER}#'))">
+	<form action="#PATHINFO_URL#" method="POST" onSubmit="return formSubmitChange(this);">
+        <tr>
+           <td class="results">
+
+              <table class="results" border="0" cellspacing="0" cellpadding="5" align=center>
+
+	      <maly-set var="RESULTSPAN" eval="#SCALAR:COLUMNS# + '#HAS_BULKCHANGE_ACCESS#'"/>
+
+	      <maly-if var="CONFIG{ALPHABETICAL_LIST}">
+              <tr>
+                <td class="traverse" colspan="#RESULTSPAN#" align="left">
+		  Limit: 
+		  <maly-loop name="LETTER" split="A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z">
+		    <a href="#URL#/#PATH_INFO{TREE}#/#PATH_INFO{CLASS}#/#PATH_INFO{FILTER}#?append_filter=#COLUMNS[0]#=#LETTER#*&popup=#FORM{POPUP}#">#LETTER#</a>&nbsp;&nbsp;
+		  </maly-loop>
+		  <a href="#URL#/#PATH_INFO{TREE}#/#PATH_INFO{CLASS}#/#PATH_INFO{FILTER}#?popup=#FORM{POPUP}#">ALL</a>
+                </td>
+              </tr>
+	      </maly-if>
+              <tr>
+	        <maly-if var="RESULTSPAN" lt=3>
+		  <maly-set var="MINWIDTH" value="width: 400px"/>
+		</maly-if>
+                <td class="traverse" colspan="#RESULTSPAN#" align="left" style="#MINWIDTH#">
+                  (#COUNT# Results)
+                </td>
+              </tr>
+              <maly-if var=RESULTS>
+              <tr>
+	          <maly-if var="HAS_BULKCHANGE_ACCESS">
+		  <td class="header" id="bulkchange_header" align=center valign=bottom style="width: 50px">
+		    <input type=checkbox id="select_all" onClick="return check_all(this, 'select');">
+		  </td>
+		  </maly-if>
+                <maly-loop name="ATTR" var="COLUMNS">
+                  <td class="header Search_#PATH_INFO{CLASS}#_#ATTR#_header" align=center valign=bottom>
+                    <a href="#URL#/#PATH_INFO{TREE}#/#PATH_INFO{CLASS}#/#PATH_INFO{FILTER}#?sort=#ATTR#&desc=#DESC{#ATTR#}#&popup=#FORM{POPUP}#">
+                      #HEADER{#ATTR#}#
+                    </a>
+                  </td>
+                </maly-loop>
+              </tr>
+              <maly-loop name="ENTRY" var=RESULTS sort="#SORT#" reverse="#REVERSE#">
+              <maly-set var="RESULT_CLASS" eval=1 value="#MALYITER# % 2 == 0 ? 'data1' : 'data2'"/>
+              <tr>
+	          <maly-if var="HAS_BULKCHANGE_ACCESS">
+		  <td id="bulkchange_#MALYITER#" class="#RESULT_CLASS#" align=center style="width: 50px">
+		    <input type=checkbox name="entries" id="select_#MALYITER#" value="#ENTRY{#PRIMARY_KEY#}#" onChange="return toggle_bulkChange();">
+		  </td>
+		  </maly-if>
+                <maly-loop name="ATTR" var="COLUMNS">
+		  <maly-set var="COLUMN_INDEX" from="MALYITER"/>
+                  <td class="#RESULT_CLASS# Search_#PATH_INFO{CLASS}#_#ATTR#" align=center>
+#include search_field
+                  </td>
+                </maly-loop>
+              </tr>
+              </maly-loop>
+
+	      <maly-if not=1 var="CONFIG{ALPHABETICAL_LIST}">
+	      <tr>
+	        <td align=left colspan="#RESULTSPAN#">
+		<maly-if var="CURR_PAGE" gt="0">
+		  <maly-set var="PREVPAGE" eval=1 value="'#CURR_PAGE#'-1"/>
+		  <a href="#URL#/#PATH_INFO{TREE}#/#PATH_INFO{CLASS}#/#PATH_INFO{FILTER}#?sort=#FORM{SORT}#&desc=#FORM{DESC}#&page=#PREVPAGE#&entries_per_page=#FORM{ENTRIES_PER_PAGE}#&advanced=#FORM{ADVANCED}#&explicit_filter=#FORM{EXPLICIT_FILTER}#">&lt; Previous</a>
+		</maly-if>
+		<maly-loop from=1 to="#PAGE_COUNT#">
+		  <maly-if var="CURR_PAGE" eq="#MALYITER#">
+		    <span style="">#MALYITERNUM#</span>
+		  <maly-else/>
+		    <a href="#URL#/#PATH_INFO{TREE}#/#PATH_INFO{CLASS}#/#PATH_INFO{FILTER}#?sort=#FORM{SORT}#&desc=#FORM{DESC}#&page=#MALYITER#&entries_per_page=#FORM{ENTRIES_PER_PAGE}#&advanced=#FORM{ADVANCED}#&explicit_filter=#FORM{EXPLICIT_FILTER}#" style="text-decoration: underline; font-weight: normal">#MALYITERNUM#</a>
+		  </maly-if>
+		  &nbsp;&nbsp;
+		</maly-loop>
+		<maly-if var="CURR_PAGE" lt="#PAGE_INDEX#">
+		  <maly-set var="NEXTPAGE" eval=1 value="'#CURR_PAGE#'+1"/>
+		  <a href="#URL#/#PATH_INFO{TREE}#/#PATH_INFO{CLASS}#/#PATH_INFO{FILTER}#?sort=#FORM{SORT}#&desc=#FORM{DESC}#&page=#NEXTPAGE#&entries_per_page=#FORM{ENTRIES_PER_PAGE}#&advanced=#FORM{ADVANCED}#&explicit_filter=#FORM{EXPLICIT_FILTER}#">Next &gt;</a>
+		</maly-if>
+		</td>
+	      </tr>
+	      </maly-if>
+              </maly-if>
+            </table>
+          </td>
+        </tr>
+
+	  <tr id="bulkchange_form">
+	    <td class="results">
+	      <maly-set var="EXCLUDEKEYS" list="ACTION,SET,UNSET,ENTRIES"/>
+	      <maly-loop var="FORM" hash=1>
+	      <maly-if not=1 var=KEY in="EXCLUDEKEYS">
+	        <maly-loop var="VALUE" name="VAL">
+		<input type=hidden name="#KEY#" value="#VAL#">
+		</maly-loop>
+	      </maly-if>
+	      </maly-loop>
+	      <table width="100%" align=center>
+	        <tr>
+		  <th colspan=3 class="header" align=left>Bulk Changes (Applies to checked entries above only):</th>
+		</tr>
+	        <tr>
+		  <td rowspan=2>
+		    <select multiple=multiple size=10 style="width: 100%; height: 100%" id='bulkcols'>
+		      <maly-loop var="SECTIONS" name="SECTION">
+		        <maly-if var="SECTION{ABBREV}" in="ENABLED_SECTIONS">
+			  <maly-loop var="SECTION{COLUMNS}" name="ATTR">
+			  <maly-if var="ATTR">
+			    <maly-if not=1 var="ATTR" in="BULK_CHANGE{EXCLUDE}">
+			      <option value="#ATTR#">#HEADER{#ATTR#}#</option>
+			    </maly-if>
+			  </maly-if>
+			  </maly-loop>
+			</maly-if>
+		      </maly-loop>
+		    </select>
+		  </td>
+		  <td align=center valign=middle>
+		    <a href="Javascript:void(0)" onClick="return bulk_set('set','bulkcols','unset');">Set =&gt;</a><br>
+		  </td>
+		  <td>
+		    <input type=checkbox id='replace_all' onClick="bulk_replace_all(this, 'set');">Replace All Existing Values<br>
+		    <select multiple=multiple name="set" id="set" size=5 style="height: 100px; width: 100%" onChange="bulk_replace_edit(this, 'replace_all');">
+		    </select>
+		    <br>
+		    <a href="Javascript:void(0)" onClick="return bulk_change('set');">Change Value</a> |
+		    <a href="Javascript:void(0)" onClick="return bulk_remove('set');">Remove Change</a>
+		  </td>
+		</tr>
+		<tr>
+		  <td align=center valign=middle>
+		    <a href="Javascript:void(0)" onClick="return bulk_set('unset','bulkcols','set', 1);">Unset/Remove =&gt;</a><br>
+		  </td>
+		  <td>
+		    <select name="unset" id="unset" multiple=multiple size=5 style="width: 100%; height: 100px">
+		    </select>
+		    <br>
+		    <a href="Javascript:void(0)" onClick="return bulk_change('unset');">Change Value</a> |
+		    <a href="Javascript:void(0)" onClick="return bulk_remove('unset');">Remove Change</a>
+		  </td>
+
+		</tr>
+		<maly-if eval="'#HAS_ADMIN_ACCESS#' and '#SCALAR:ENTRY_TYPES#'">
+		<tr>
+		  <td colspan=3>
+		    Entry Type:
+		    <select name="set">
+		    <option value=""> -- NO CHANGE -- </option>
+	              <maly-loop var="ENABLED_ENTRY_TYPES" hash=1>
+		        <option value="entry_type:#KEY#">#VALUE{NAME}#</option>
+		      </maly-loop>
+		    </select>
+		    <br>
+		    (* Note: Upgrading entry types may need to be done on an individual entry-by-entry basis)
+		</tr>
+		</maly-if>
+		<tr>
+		  <td align=left colspan=2>
+		    <input type=submit name=action value="Commit Changes">
+		  </td>
+		  <td align=right colspan=1>
+		    <maly-if var="HAS_ADMIN_ACCESS">
+		    <input style="font-weight: bold; color: red" type=submit name=action value="Delete Entries" onClick="return verifyDelete();">
+		    <maly-else/>
+		      &nbsp;
+		    </maly-if>
+		  </td>
+		</tr>
+	      </table>
+	    </td>
+	  </tr>
+	  </form>
+	</maly-if>
+</maly-set>
+#include main

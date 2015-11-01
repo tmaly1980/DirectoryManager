@@ -1,0 +1,25 @@
+                    <maly-load file="#CUSTOM_DIR#/#ATTR#,#CUSTOM_GLOBAL_OC_DIR#/#ATTR#,#CUSTOM_GLOBAL_DIR#/#ATTR#">
+		      <maly-loop name=VALUE var="ENTRY{#ATTR#}">
+		        <maly-if eval="('#LINK_COL#' eq '' and '#COLUMN_INDEX#' eq '0') or '#LINK_COL#' eq '#ATTR#'">
+			  <maly-if var="ENTRY{HAS_EDIT_ACCESS}">
+			    <maly-if var="CONFIG{IMPLICIT_EDIT}">
+		              <a href="#ENTRY{EDIT_URL}#">#VALUE#</a>
+			    <maly-else/>
+		              <a href="#ENTRY{VIEW_URL}#">#VALUE#</a>
+			      <br>
+			      (<a href="#ENTRY{EDIT_URL}#">Edit</a>)
+			    </maly-if>
+			  <maly-else/>
+		            <a href="#ENTRY{VIEW_URL}#">#VALUE#</a>
+			  </maly-if>
+		        <maly-elsif eval="'#CONFIG{IMPLICIT_LINK}#' ne '1' and '#LINKS{#ATTR#}#'"/>
+#include view_cross
+		        <maly-elsif eval="'#CONFIG{IMPLICIT_LINK}#' eq '1' and '#LINKS{#ATTR#}#'"/>
+#include view_cross_inline
+			<maly-else/>
+		          #VALUE#
+			<br>
+			</maly-if>
+		      </maly-loop>
+                    </maly-load>
+

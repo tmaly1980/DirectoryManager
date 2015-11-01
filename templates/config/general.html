@@ -1,0 +1,187 @@
+<maly-set var="ITEMS" list=1>
+</maly-set>
+
+<maly-set var="CUSTOM_ONLOAD">
+  set_field(f.DEFAULT_TREE, '#CONF{DEFAULT_TREE}#');
+  set_field_default(f, 'REQUIRE_LOGIN', '#CONF{REQUIRE_LOGIN}#', '#DEFAULT{REQUIRE_LOGIN}#', '0');
+  set_field_default(f, 'IMPLICIT_EDIT', '#CONF{IMPLICIT_EDIT}#', '#DEFAULT{IMPLICIT_EDIT}#', '1');
+  set_field_default(f, 'IMPLICIT_LINK', '#CONF{IMPLICIT_LINK}#', '#DEFAULT{IMPLICIT_LINK}#', '0');
+  set_field_default(f, 'ALPHABETICAL_LIST', '#CONF{ALPHABETICAL_LIST}#', '#DEFAULT{ALPHABETICAL_LIST}#', '0');
+  set_field_default(f, 'ENTRIES_PER_PAGE', '#CONF{ENTRIES_PER_PAGE}#', '#DEFAULT{ENTRIES_PER_PAGE}#', '20');
+
+  set_field_default(f, 'REQUEST_RECIPIENTS', '#CONF{REQUEST_RECIPIENTS}#', '#DEFAULT{REQUEST_RECIPIENTS}#');
+  set_field_default(f, 'REQUEST_FROM', '#CONF{REQUEST_FROM}#', '#DEFAULT{REQUEST_FROM}#');
+
+  // Need to do domain map inherit checkbox....
+  if ('#LIST:CONF{DOMAIN_MAP}#' == '#LIST:DEFAULT{DOMAIN_MAP}#')
+  {
+    set_field(f['INHERIT_DOMAIN_MAP'], 1);
+  }
+
+</maly-set>
+<maly-set var="CUSTOM_SUBMIT">
+  selectSubmit('DOMAIN_MAP');
+
+</maly-set>
+<maly-set var="CUSTOM_STYLE">
+
+</maly-set>
+<maly-set var="CONTENT">
+  <div align=right> <a href="Javascript:void(0)" onClick="helpPopup('config/index.html#general');">HELP</a> </div>
+
+  <maly-if not=1 var="CONF{DEFAULT_TREE}">
+  <maly-if var="TREE" eq="_GLOBAL">
+  <div class="alert">You do not currently have a default tree set up. Please set and click on 'Update'.</div>
+  <maly-else/>
+  <div class="alert">You do not currently have a default tree set up. Please <a href="cgi-bin/admin/config.pl/general?tree=">Click Here</a> to set.</div>
+  </maly-if>
+  </maly-if>
+
+  <table align=center style="border: solid 1px" cellspacing=0 cellpadding=3 class="config" width="75%">
+    <tr class="header">
+      <th valign=top class="header" width="20%">Option:</th>
+      <th valign=top class="header">Value:</th>
+      <maly-if var="TREE" ne="_GLOBAL"><th valign=top class="header">Inherit:</th></maly-if>
+    </tr>
+
+    <maly-if var="TREE" eq="_GLOBAL">
+    <tr>
+      <th>Default Tree:</th>
+      <td class="input">
+        <select name="DEFAULT_TREE">
+	  <maly-loop var="TREES" hash=1 name="TREENAME:TREEREF">
+	    <maly-if var="TREENAME" ne="_GLOBAL">
+	    <option value="#TREENAME#">#TREEREF{NAME}#</option>
+	    </maly-if>
+	  </maly-loop>
+	</select>
+      </td>
+    </tr>
+
+    </maly-if>
+
+    <tr>
+      <th valign=top>Require Login:</th>
+      <td class="input">
+        <nobr>
+        <input type=radio name="REQUIRE_LOGIN" value=1 onClick="loseInherit(this);">Yes
+        <input type=radio name="REQUIRE_LOGIN" value=0 onClick="loseInherit(this);">No
+	</nobr>
+      </td>
+      <maly-if var="TREE" ne="_GLOBAL"><td class="input" align=center valign=top><input type=checkbox name="INHERIT_REQUIRE_LOGIN" value=1></td></maly-if>
+    </tr>
+
+    <tr>
+      <th valign=top>Implicit Edit:</th>
+      <td class="input">
+        <nobr>
+        <input type=radio name="IMPLICIT_EDIT" value=1 onClick="loseInherit(this);">Yes
+        <input type=radio name="IMPLICIT_EDIT" value=0 onClick="loseInherit(this);">No
+	</nobr>
+      </td>
+      <maly-if var="TREE" ne="_GLOBAL"><td class="input" align=center valign=top><input type=checkbox name="INHERIT_IMPLICIT_EDIT" value=1></td></maly-if>
+    </tr>
+
+    <tr>
+      <th valign=top>Implicit Link:</th>
+      <td class="input">
+        <nobr>
+        <input type=radio name="IMPLICIT_LINK" value=2 onClick="loseInherit(this);">On Edit Only<br>
+        <input type=radio name="IMPLICIT_LINK" value=1 onClick="loseInherit(this);">Always<br>
+        <input type=radio name="IMPLICIT_LINK" value=0 onClick="loseInherit(this);">Never
+	</nobr>
+      </td>
+      <maly-if var="TREE" ne="_GLOBAL"><td class="input" align=center valign=top><input type=checkbox name="INHERIT_IMPLICIT_LINK" value=1></td></maly-if>
+    </tr>
+
+    <tr>
+      <th valign=top>Alphabetical List Results:</th>
+      <td class="input">
+        <nobr>
+        <input type=radio name="ALPHABETICAL_LIST" value=1 onClick="toggleField('1', 'ENTRIES_PER_PAGE'); loseInherit(this);">Yes
+        <input type=radio name="ALPHABETICAL_LIST" value=0 onClick="toggleField('0', 'ENTRIES_PER_PAGE'); loseInherit(this);">No
+	</nobr>
+      </td>
+      <maly-if var="TREE" ne="_GLOBAL"><td class="input" align=center valign=top><input type=checkbox name="INHERIT_ALPHABETICAL_LIST" value=1></td></maly-if>
+    </tr>
+
+    <tr>
+      <th valign=top>Entries Per Page:</th>
+      <td class="input">
+        <nobr>
+	  <input type=text name="ENTRIES_PER_PAGE" id="ENTRIES_PER_PAGE" onChange="loseInherit(this):">
+	</nobr>
+      </td>
+      <maly-if var="TREE" ne="_GLOBAL"><td class="input" align=center valign=top><input type=checkbox name="INHERIT_ENTRIES_PER_PAGE" value=1></td></maly-if>
+    </tr>
+
+
+
+    <maly-loop var="ITEMS" name=ITEM>
+      <maly-load file="#LC:ITEM#"/>
+    </maly-loop>
+    
+    <tr>
+      <th valign=top>Request Recipients:</th>
+      <td class="input">
+        <nobr>
+	  <input type=text name="REQUEST_RECIPIENTS" onChange="loseInherit(this);">
+	</nobr>
+      </td>
+      <maly-if var="TREE" ne="_GLOBAL"><td class="input" align=center valign=top><input type=checkbox name="INHERIT_REQUEST_RECIPIENTS" value=1></td></maly-if>
+    </tr>
+
+
+
+    <tr>
+      <th valign=top>Request Sender:</th>
+      <td class="input">
+        <nobr>
+	  <input type=text name="REQUEST_FROM" onChange="loseInherit(this);">
+	</nobr>
+      </td>
+      <maly-if var="TREE" ne="_GLOBAL"><td class="input" align=center valign=top><input type=checkbox name="INHERIT_REQUEST_FROM" value=1></td></maly-if>
+    </tr>
+
+<tr> <td class="input" colspan=3 >&nbsp;</td> </tr>
+
+    <tr>
+      <th valign=top>Domain Map:</th>
+      <td class="input">
+        <nobr>
+      <div>
+      <select name="DOMAIN_MAP" id="DOMAIN_MAP" size="4" multiple="multiple" style="width: 250px" 
+          onChange="multiList_edit('DOMAIN_MAP')">
+        <maly-loop var="CONF{DOMAIN_MAP}" hash=1>
+          <option value="#KEY#:#VALUE#">#KEY# =&gt; #VALUE#</option>
+        </maly-loop>
+      </select>
+      </div>
+      <div align=left>
+      <!--
+      <a onclick="loseInherit(document.editForm.DOMAIN_MAP); return multiList_add('DOMAIN_MAP', new Array('DOMAIN_MAP_COMPANY','DOMAIN_MAP_DOMAIN'), '%0% => %1%')" href="Javascript:void(0)">Add</a>
+       | <a onclick="loseInherit(document.editForm.DOMAIN_MAP); return multiList_replace('DOMAIN_MAP', new Array('DOMAIN_MAP_COMPANY','DOMAIN_MAP_DOMAIN'), '%0% => %1%')" href="Javascript:void(0)">Replace</a>
+       | <a onclick="loseInherit(document.editForm.DOMAIN_MAP); return multiList_remove('DOMAIN_MAP', new Array('DOMAIN_MAP_COMPANY','DOMAIN_MAP_DOMAIN'), '%0% => %1%')" href="Javascript:void(0)">Remove</a>
+       -->
+      <a onclick="loseInherit(document.editForm.DOMAIN_MAP); return multiList_prompt_add('DOMAIN_MAP', ['Enter in a Company Name', 'Enter in a Domain Name'], '%0% => %1%')" href="Javascript:void(0)">Add</a>
+       | <a onclick="loseInherit(document.editForm.DOMAIN_MAP); return multiList_prompt_replace('DOMAIN_MAP', ['Enter in a Company Name', 'Enter in a Domain Name'], '%0% => %1%')" href="Javascript:void(0)">Replace</a>
+       | <a onclick="loseInherit(document.editForm.DOMAIN_MAP); return multiList_remove('DOMAIN_MAP')" href="Javascript:void(0)">Remove</a>
+    </div>
+    <!--
+    <div align=left>
+      Company: <input type="text" name="DOMAIN_MAP_COMPANY" id="DOMAIN_MAP_COMPANY" size="25"/>
+    </div>
+    <div align=left>
+      Domain: <input type="text" name="DOMAIN_MAP_DOMAIN" id="DOMAIN_MAP_DOMAIN" size="25"/>
+    </div>
+    -->
+
+	</nobr>
+      </td>
+      <maly-if var="TREE" ne="_GLOBAL"><td class="input" align=center valign=top><input type=checkbox name="INHERIT_DOMAIN_MAP" value=1></td></maly-if>
+    </tr>
+  </table>
+
+</maly-set>
+
+#include main

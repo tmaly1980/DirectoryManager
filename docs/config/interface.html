@@ -1,0 +1,42 @@
+<html>
+<head>
+  
+  <title>Directory Manager 2.0 Documentation: Interface Overview</title>
+  <link href="../style.css" rel="stylesheet" type="text/css"></link>
+</head>
+<body>
+  <p> 
+	Navigation:
+	<a href="../" name="top">Top</a> | <a href="./">Up</a> | <a href="Javascript:history.go(-1)">Back</a>
+  </p>
+
+  <p align="center" style="font-size: 20px; font-weight: bold">Directory Manager 2.0 Documentation: Interface Overview</p>
+  <div style="padding-top: 10px; padding-left: 20px"><null>
+<p style='text-indent: 8px'>The Directory Manager Configuration interface enables you to configure settings on a tree-by-tree basis. </p>
+
+	
+	It also permits 'global' settings, which allow for globally setting option across ALL trees without manually setting them for each one. These global settings also allow you to change things once and have it affect ALL servers immediately. To set an option Globally, simply select the 'Global' Scope from the drop-down menu, set the options, and click on 'Update'. To set tree-specific settings, simply change the 'Scope' drop-down menu to that specific tree.
+<p style='text-indent: 8px'>The graphical interface is laid out such that you can switch between the settings of a particular directory tree or the global settings via a drop-down menu at the top-right. You can also add trees via the 'Add Tree' button next to it.</p>
+
+
+	<div style='font-weight: bold' align=center>Switching between trees:</div>
+<div style='padding: 5px' align=center><a href='../images/admin_tree_select.png' target='_new'><img src='../images/thumbs/admin_tree_select.png'></a></div>
+<p style='text-indent: 8px'>For each specific directory tree, you are given the ability to override the respective global settings. You do this by simply setting a value other than what it is currently set to. </p>
+
+<p style='text-indent: 8px'>To erase a tree-specific value and to fall back onto the global default, simply select the 'Inherit' checkbox for the respective configuration item and the click on 'Update'. Upon reload, the box should be checked meaning that it is inheriting the value, and the value displayed should be what is in the global settings.</p>
+
+<p style='text-indent: 8px'>You are given a list of menus via 'tabs', which group similar configuration options together and separate to maximize the ease-of-use. Having a specific tree selected will give you extra menus, such as 'Tree Settings' and 'Samba 3'. However, when Directory Manager gets first set up, none of the menus will be enabled until a tree is set up.</p>
+
+
+	<div style='font-weight: bold' align=center>Configuration Menu Options:</div>
+<div style='padding: 5px' align=center><a href='../images/admin_tabs.png' target='_new'><img src='../images/thumbs/admin_tabs.png'></a></div>
+<p style='text-indent: 8px'>The 'Access Control' and 'Licensing' tabs are considered part of the 'Global' configuration scope and will switch to that scope when clicked on.</p>
+
+
+	<p class="important">* Note: It is REQUIRED to go through each and every menu and sub-menu to ENSURE proper configuration of Directory Manager. The values on the screen of each menu do not necessarily reflect what's in the configuration files until you click on 'Update'.</p>
+
+	</null></div>
+
+  <p align="center">Copyright &copy; 2004-2005 <a href="http://www.malysoft.com/">Maly Soft</a></p>
+</body>
+</html>

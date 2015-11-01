@@ -1,0 +1,94 @@
+<maly-loop name="SECTION_NAME" var="ENABLED_SECTIONS">
+  <maly-set var="SECTION" from="SECTIONS{ABBREV=#SECTION_NAME#}"/>
+  <maly-loop var="SECTION{COLUMNS}" name="ATTR">
+  <maly-if var="FORM{#ATTR#}">
+    <maly-set var="VALUE_OR_DEFAULT{#ATTR#}" from="FORM{#ATTR#}"/>
+  <maly-elsif var="ENTRY{#ATTR#}"/>
+    <maly-set var="VALUE_OR_DEFAULT{#ATTR#}" from="ENTRY{#ATTR#}"/>
+  <maly-elsif var="CLASSREF{DEFAULTS}{#ATTR#}"/>
+    <maly-set var="VALUE_OR_DEFAULT{#ATTR#}" from="CLASSREF{DEFAULTS}{#ATTR#}"/>
+  </maly-if>
+  </maly-loop>
+</maly-loop>
+
+<maly-set var="CUSTOM_STYLE">
+
+</maly-set>
+
+
+<maly-set var="CUSTOM_ONLOAD">
+
+<maly-if var="MODE" eq="Add">
+  <maly-loop hash=1 var="DEFAULT">
+    set_field('#KEY#', "#VALUE#");
+  </maly-loop>
+</maly-if>
+<maly-loop name="SECTION_NAME" var="ENABLED_SECTIONS">
+  <maly-set var="SECTION" from="SECTIONS{ABBREV=#SECTION_NAME#}"/>
+  <maly-loop var="SECTION{COLUMNS}" name="ATTR">
+  <maly-if var="MULTIPLE_CHOICE{#ATTR#}">
+    set_field('#ATTR#', '#ATTR#_other', "#VALUE_OR_DEFAULT{#ATTR#}#");
+  </maly-if>
+  </maly-loop>
+</maly-loop>
+</maly-set>
+
+<maly-set var="CONTENT">
+  <tr>
+    <td style="padding: 10px">
+      <form method="POST" action="#PATHINFO_URL#" onSubmit="formSubmit(this);" enctype="multipart/form-data" name="editForm">
+        <table border=0 class="header" cellpadding=5 width="100%">
+	  <tr>
+	    <td align=left>#ENTRY{DN}#
+              <maly-load file="#CUSTOM_DIR#/header"/>
+	    </td>
+	    <td align=right>
+	      <maly-if var="ENTRY{HAS_EDIT_ACCESS}">
+	        <a href="#ENTRY{EDIT_URL}#?popup=#FORM{POPUP}#">Edit</a>
+	      <maly-else/>
+	        &nbsp;
+	      </maly-if>
+	    </td>
+	  </tr>
+	</table>
+
+	<maly-loop var="SECTIONS" name="SECTION">
+	<maly-if var="SECTION{ABBREV}" in="ENTRY{ENABLED_SECTIONS}">
+	  <div width="100%" style="font-weight: bold" class="section_header">
+	    <input type=checkbox name="checkbox_#SECTION{ABBREV}#" value=1 checked=checked onClick="toggleSection(this, '#SECTION{ABBREV}#');">
+	    #SECTION{NAME}#:
+	  </div>
+
+	  <div id="#SECTION{ABBREV}#">
+
+	  <table border=0 cellpadding=2 cellspacing=0 width="100%" align=center>
+	    <maly-loop var="SECTION{COLUMNS}" group_count=2 name="ROW">
+	    <maly-set var="DATA_CLASS" eval="'#MALYITER#' % 2 == 0 ? 'data' : 'data2' "/>
+	      <tr>
+		<maly-loop var="ROW" name="ATTR">
+		<maly-if var="ATTR">
+	        <th valign=top align=right class="viewheadercol" width="15%">#HEADER{#ATTR#}#:</th>
+		<td class="#DATA_CLASS#" valign=top width="35%">
+#include view_field
+		</td>
+                </maly-loop>
+		<maly-else/>
+		<td colspan=2 class="#DATA_CLASS#">
+		  &nbsp;
+		</td>
+		</maly-if>
+	      </tr>
+	    </maly-loop>
+
+	  </table>
+
+	  </div>
+        </maly-if>
+	</maly-loop>
+
+      </form>
+    </td>
+  </tr>
+
+</maly-set>
+#include main

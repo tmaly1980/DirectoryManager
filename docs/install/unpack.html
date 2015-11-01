@@ -1,0 +1,46 @@
+<html>
+<head>
+  
+  <title>Directory Manager 2.0 Documentation: Unpacking Directory Manager</title>
+  <link href="../style.css" rel="stylesheet" type="text/css"></link>
+</head>
+<body>
+  <p> 
+	Navigation:
+	<a href="../" name="top">Top</a> | <a href="./">Up</a> | <a href="Javascript:history.go(-1)">Back</a>
+  </p>
+
+  <p align="center" style="font-size: 20px; font-weight: bold">Directory Manager 2.0 Documentation: Unpacking Directory Manager</p>
+  
+	  <ol>
+
+	<li style=''>After downloading the software from the site, you should put the TGZ file into the parent directory that will host the web site, and then unzip it. For example:
+
+	<div align="left" style="background-color: #CCCCCC; font-family: monospace; white-space: pre">
+cp DirectoryManager.tgz /var/www
+cd /var/www
+tar zxvf DirectoryManager.tgz
+cd DirectoryManager
+	</div>
+
+	</li>
+
+	<li style=''>From here (WITHIN the new DirectoryManager directory), enable executability (and other proper file permissions) for all CGI's and scripts:
+
+	<div align="left" style="background-color: #CCCCCC; font-family: monospace; white-space: pre">
+chmod a+rx . bin/* cgi-bin/*
+	</div>
+
+	</li>
+
+	<li style=''>If you have a license file (named 'DirectoryManager-license.conf'), copy it to the etc/ directory (ignore this step for the Home Directory Server if different than your web server):
+	<div align="left" style="background-color: #CCCCCC; font-family: monospace; white-space: pre">
+cp DirectoryManager-license.conf /var/www/DirectoryManager/etc/
+	</div>
+	</li>
+	</ol>
+  
+
+  <p align="center">Copyright &copy; 2004-2005 <a href="http://www.malysoft.com/">Maly Soft</a></p>
+</body>
+</html>

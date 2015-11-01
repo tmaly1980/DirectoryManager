@@ -1,0 +1,20 @@
+<maly-set var="CUSTOM_DIR" from="CUSTOM_DIR_EDIT"/>
+		<maly-load file="#CUSTOM_DIR#/#ATTR#,#CUSTOM_GLOBAL_OC_DIR#/#ATTR#,#CUSTOM_GLOBAL_DIR#/#ATTR#">
+		  <maly-if var="CLASSCONF{MULTIPLE}{#ATTR#}">
+                    <select name="#ATTR#" id="#ATTR#" onChange="multivalue_edit(this);">
+	              <option value="">Other</option>
+	              <maly-loop name="OPT" var="CLASSCONF{MULTIPLE}{#ATTR#}">
+	                <option value="#OPT#">#OPT#</option>
+	              </maly-loop>
+	            </select>
+	            <input type=text name="#ATTR#" id='#ATTR#_text' size="20" onChange="get_field('#ATTR#').selectedIndex = 0;">
+		  <maly-elsif eval="'#LINKS{#ATTR#}#' and '#CONFIG{IMPLICIT_LINK}#'"/>
+#include edit_cross_inline
+		  <maly-elsif var="LINKS{#ATTR#}"/>
+#include edit_cross
+		  <maly-elsif var="ATTR" in="MULTIPLE"/>
+#include edit_multiple_prompt
+		  <maly-else/>
+	            <input type=text name="#ATTR#" id='#ATTR#' size="25" value="#VALUE_OR_DEFAULT{#ATTR#}#" class="Edit_#PATH_INFO{CLASS}#_#ATTR#">
+		  </maly-if>
+		</maly-load>

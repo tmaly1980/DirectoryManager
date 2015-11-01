@@ -1,0 +1,9 @@
+<maly-if var="MODE" eq="Add">
+<input type=text size=15 name=gidNumber value="#VALUE_OR_DEFAULT{#ATTR#}#">
+<maly-else/>
+  <maly-if var="ENTRY{GROUP}{CN}">
+    <input type=text size=15 name=gidNumber value="#ENTRY{GROUP}{CN}#">
+  <maly-else/>
+    <input type=text size=15 name=gidNumber value="#ENTRY{#ATTR#}#">
+  </maly-if>
+</maly-if>

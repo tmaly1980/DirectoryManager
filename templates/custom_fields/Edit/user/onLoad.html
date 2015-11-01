@@ -1,0 +1,15 @@
+set_field('acctFlags_D', '#ENTRY{ACCTFLAGSLIST}{D}#');
+set_field('sambaAcctFlags_D', '#ENTRY{SAMBAACCTFLAGSLIST}{D}#');
+<maly-if var="MODE" eq="Add">
+set_field('acctFlags_X', 'X');
+set_field('sambaAcctFlags_X', 'X');
+//set_field('homeDirectory_create', '1');
+<maly-else/>
+set_field('acctFlags_X', '#ENTRY{ACCTFLAGSLIST}{X}#');
+set_field('sambaAcctFlags_X', '#ENTRY{SAMBAACCTFLAGSLIST}{X}#');
+</maly-if>
+
+set_field('accountLock', '#ENTRY{ACCOUNTLOCK}#');
+set_field(new Array('uid', 'uid_text'), '#ENTRY{UID}#');
+set_field(new Array('uidNumber_auto', 'uidNumber'), '#ENTRY{UIDNUMBER}#', '${uidNum}');
+set_field('userPassword', '#ENTRY{USERPASSWORD}#');

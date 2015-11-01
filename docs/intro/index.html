@@ -1,0 +1,113 @@
+<html>
+<head>
+  
+  <title>Directory Manager 2.0 Documentation: Introduction</title>
+  <link href="../style.css" rel="stylesheet" type="text/css"></link>
+</head>
+<body>
+  <p> 
+	Navigation:
+	<a href="../" name="top">Top</a> | <a href="../">Up</a> | <a href="Javascript:history.go(-1)">Back</a>
+  </p>
+
+  <p align="center" style="font-size: 20px; font-weight: bold">Directory Manager 2.0 Documentation: Introduction</p>
+  <ul><li style=''><a href="#whatis">What is Directory Manager?</a></li><li style=''><a href="#why"> Why use Directory Manager? </a></li><li style=''><a href="#whycommercial">Why is Directory Manager commercial?</a></li></ul>
+
+<a href='#top' name='whatis'><div style='padding-top: 10px; font-size: 16px; font-weight: bold'>What is Directory Manager?</div></a>
+  <div style='padding-top: 10px; padding-left: 20px'>
+Directory Manager is a powerful and extensible LDAP Directory Management Suite that enables you to manage directory entries of one or more OpenLDAP servers, including:
+		<ul>
+		<li style=''>Address Book Entries (i.e. Rolodexes)
+		<li style=''>UNIX Users and Groups
+		<li style=''>Samba Users and Groups
+		<li style=''>SMTP Mailing Lists/Aliases
+		<li style=''>Room/Office Locations
+		</li></li></li></li></li></ul>
+<p style='text-indent: 8px'>Using Directory Manager together with OpenLDAP and Samba (as well as other third party server software), you can:</p>
+
+		<ul>
+		<li style=''>Centralize UNIX and Windows (Samba) users and groups for an entire network into a single database managed from one interface
+		<li style=''>Manage one or more distinct UNIX/Windows account databases from a single interface
+		<li style=''>Consolidate UNIX and Samba users and groups into a single data entry, including proper account/password synchronization
+		<li style=''>Replace expensive Windows-based domain controllers with inexpensive Linux-based Samba servers, while keeping a convenient management interface
+		<li style=''>Manage email mailing lists and aliases for one or more domains from a single interface
+		<li style=''>Migrate from using an /etc/passwd or NIS style user database to a centralized LDAP database that can serve entire networks
+		<li style=''>Migrate from a pure UNIX or Samba 2 environment to Samba 3 easily
+		</li></li></li></li></li></li></li></ul>
+<p style='text-indent: 8px'>Directory Manager provides unparalleled power and convenience through the following features:</p>
+
+		<ul>
+
+		<li style=''>Rapid form entry through customizable drop-down lists as well as pre-filled entry templates
+		<li style=''>Viewing and editing related cross-referenced entries from a single page
+		<li style=''>Embedding a searchable LDAP directory into your pre-existing web pages
+		<li style=''>Data importing for migrating external databases (such as /etc/passwd or NIS) into LDAP
+		<li style=''>Exporting LDAP searches to Excel-compatible CSV format
+		<li style=''>Management of multiple LDAP directories and servers from a single interface
+		<li style=''>User friendly browsing of entries in an address-book style
+		<li style=''>Managing cross-referenced (related) entries (such as a user's auxiliary groups or mailing lists) from a single page (such as the user's entry page itself)
+		<li style=''>Easily mix and match entry types (such as address book, UNIX or Samba users) within the same directory node on a per-entry basis
+		<li style=''>Perform systematic (bulk) changes to one or more entries at one time, such as disabling accounts or changing departments during a corporate 'reorganization'
+		<li style=''>Distribute several levels of administrative access via access control groups, incuding 'Full Administrator', 'Moderator' and 'Requestor' levels of access, separating common data entry and maintenance from internal systems control
+		<li style=''>Define access control groups once, and assign to one or more tree
+		<li style=''>Seamless migration to Samba 2 or Samba 3 integrated directories
+		<li style=''>Automatically create home directories for users via a secure, simple and extensible HTTP(S)-based RPC Daemon
+		</li></li></li></li></li></li></li></li></li></li></li></li></li></li></ul>
+		
+	Other major features of Directory Manager include:
+		<ul>
+		<li style=''>Secure communications through TLS/SSL
+		<li style=''>LDAP-based access control
+		<li style=''>Multiple levels of administrative access
+		<li style=''>Access levels determined by group membership
+		<li style=''>Restricting module access on either a global or tree-by-tree basis, based upon various access level requirements
+		</li></li></li></li></li></ul>
+
+  </div>
+
+<a href='#top' name='why'><div style='padding-top: 10px; font-size: 16px; font-weight: bold'> Why use Directory Manager? </div></a>
+  <div style='padding-top: 10px; padding-left: 20px'>
+		<ul>
+		<li style=''>Is standards compliant, using technologies such as LDAPv3, TLS, OpenLDAP access control lists, as well as standard LDAP schemas
+		<li style=''>Is written in Perl, a common interpretive programming language for UNIX/Linux that is hacker friendly (unlike compiled Java or C++ code)
+		<li style=''>Performs directory access and modifications as specific user entries (the logged-in user) instead of the Root DN for minimal impact on security
+		<li style=''>Helps promote using the customizability and stability of open source (OpenLDAP, Samba) while providing the power and convenience of a graphical frontend
+		<li style=''>Does not lock down nor prevent management of underlying technologies (LDAP, Samba, etc) through other third-party tools
+		</li></li></li></li></li></ul>
+</div>
+
+<a href='#top' name='whycommercial'><div style='padding-top: 10px; font-size: 16px; font-weight: bold'>Why is Directory Manager commercial?</div></a>
+  <div style='padding-top: 10px; padding-left: 20px'>
+	Directory Manager is commercial (rather than open source) to provide:
+	<ul>
+		<li style=''>Software support
+		<li style=''>Documentation
+		<li style=''>A user friendly interface
+		<li style=''>Convenient use of underlying open source software
+		<li style=''>Extensive customization while having sensible defaults
+		<li style=''>Full-time dedicated development and support, to help the project flourish rather than remain as a sporadic side project in the developers' free time
+	</li></li></li></li></li></li></ul>
+<p style='text-indent: 8px'>Directory Manager is priced according to the scale of it's use. We hope to provide Directory Manager to large-scale users at a fair price, while still enabling users with few and small directories to be able to use our software at an affordable price.</p>
+
+
+<a href='#top' name='prereq'><div style='padding-top: 10px; font-size: 16px; font-weight: bold'> Software Prerequisites</div></a>
+	<ul>
+	<li style=''>Linux/UNIX based server
+	<li style=''>OpenLDAP 2.x Server
+	<li style=''>OpenSSL (if you wish to use TLS, recommended)
+	<li style=''>Apache 1.3+ web server software
+	<li style=''>Perl 5.6.1+, with recent versions of the following Perl modules (available from http://search.cpan.org/):
+		<ul>
+		<li style=''>Net::LDAP
+		<li style=''>Digest::SHA1
+		<li style=''>Crypt::SmbHash
+		<li style=''>Net::SSL (uses OpenSSL)
+		<li style=''>HTTP::Daemon (non-SSL) and HTTP::Daemon::SSL (uses OpenSSL)
+		</li></li></li></li></li></ul>
+	</li>
+	</li></li></li></li></ul>
+</div>
+
+  <p align="center">Copyright &copy; 2004-2005 <a href="http://www.malysoft.com/">Maly Soft</a></p>
+</body>
+</html>

@@ -1,0 +1,41 @@
+<html>
+<head>
+  
+  <title>Directory Manager 2.0 Documentation: Bulk Import</title>
+  <link href="../style.css" rel="stylesheet" type="text/css"></link>
+</head>
+<body>
+  <p> 
+	Navigation:
+	<a href="../" name="top">Top</a> | <a href="./">Up</a> | <a href="Javascript:history.go(-1)">Back</a>
+  </p>
+
+  <p align="center" style="font-size: 20px; font-weight: bold">Directory Manager 2.0 Documentation: Bulk Import</p>
+  
+<p style='text-indent: 16px'>Migrating data into LDAP via Directory Manager is simple, with the 'Bulk Import' feature. It is available TO ADMINISTRATORS ONLY via the 'Import' navigational button on the main menu (for the specific tree and respective module).</p>
+
+		<div style='font-weight: bold' align=center>Import Link:</div>
+<div style='padding: 5px' align=center><a href='../images/import_click.png' target='_new'><img src='../images/thumbs/import_click.png'></a></div>
+		<div style='font-weight: bold' align=center>Bulk Import Page:</div>
+<div style='padding: 5px' align=center><a href='../images/bulk_import.png' target='_new'><img src='../images/thumbs/bulk_import.png'></a></div>
+<p style='text-indent: 16px'>From this page, you can specify a pre-defined file format (if applicable for the module), such as /etc/passwd or /etc/shadow for the 'Users' module. </p>
+
+		
+		You can also specify that the input file is in LDIF format, or is a tab-separated text file (i.e. XLS) with or without the attribute names (on the first line). 
+		
+		If a text file, you can specify a custom delimiter, such as ':', tab, comma, etc. 
+		
+		You can also specify a filter (in the form of a boolean expression) so certain entries do not get imported (such as " '' > 100 " to ensure the 'root' user from /etc/passwd does not get imported). 
+		
+<p style='text-indent: 16px'>You can specify a 'Mode', saying whether to simply add entries or to simply modify existing entries. You can also say to stop when an error occurs or to just keep on going. The output provided will display any errors if they occur. You can also specify an 'entry type', which ignores columns not meant for that entry type.</p>
+
+<p style='text-indent: 16px'>Finally, you specify which file to upload at the bottom.</p>
+
+<p style='text-indent: 16px'>You can specify that you want to 'Preview' the import or 'Generate LDIF' for it, specifying what exact LDIF-formatted entries will be entered into the system, without actually doing such. The 'Import' button does an actual insertion into the database with the status (result page) displayed in LDIF-format.</p>
+
+	
+	
+
+  <p align="center">Copyright &copy; 2004-2005 <a href="http://www.malysoft.com/">Maly Soft</a></p>
+</body>
+</html>

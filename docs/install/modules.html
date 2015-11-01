@@ -1,0 +1,38 @@
+<html>
+<head>
+  
+  <title>Directory Manager 2.0 Documentation: Prerequisite Perl Modules</title>
+  <link href="../style.css" rel="stylesheet" type="text/css"></link>
+</head>
+<body>
+  <p> 
+	Navigation:
+	<a href="../" name="top">Top</a> | <a href="./">Up</a> | <a href="Javascript:history.go(-1)">Back</a>
+  </p>
+
+  <p align="center" style="font-size: 20px; font-weight: bold">Directory Manager 2.0 Documentation: Prerequisite Perl Modules</p>
+  
+	  The required supplementary Perl modules include:
+	  <div align="left" style="background-color: #CCCCCC; font-family: monospace; white-space: pre">
+HTML::Parser 3.26
+Net::SSLeay 1.25 (Optional, if using HTTP::Daemon::SSL or StartTLS)
+IO::Socket::SSL 0.96 (Optional, if using HTTP::Daemon::SSL or StartTLS)
+HTTP::Daemon::SSL 1.02 (Optional, if encrypting home directory creation requests)
+Digest::MD5 2.20
+Net::LDAP 0.32 (aka perl-ldap)
+Digest::SHA1 2.10
+Crypt::SmbHash 0.12
+LWP::UserAgent 2.001
+	  </div>
+
+	  <p>A script is provided to install these modules. When run, you will be asked a series of questions, including whether or not the current server is the home directory server or the modules should be installed locally to /var/www/DirectoryManager or system-wide (as a non-root user, it will ALWAYS install locally).
+	  </p>
+	  <div align="left" style="background-color: #CCCCCC; font-family: monospace; white-space: pre">
+cd /var/www/DirectoryManager/bin
+./install_modules.pl 
+	  </div>
+  
+
+  <p align="center">Copyright &copy; 2004-2005 <a href="http://www.malysoft.com/">Maly Soft</a></p>
+</body>
+</html>

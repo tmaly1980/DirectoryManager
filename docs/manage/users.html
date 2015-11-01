@@ -1,0 +1,143 @@
+<html>
+<head>
+  
+  <title>Directory Manager 2.0 Documentation: Managing Users</title>
+  <link href="../style.css" rel="stylesheet" type="text/css"></link>
+</head>
+<body>
+  <p> 
+	Navigation:
+	<a href="../" name="top">Top</a> | <a href="./">Up</a> | <a href="Javascript:history.go(-1)">Back</a>
+  </p>
+
+  <p align="center" style="font-size: 20px; font-weight: bold">Directory Manager 2.0 Documentation: Managing Users</p>
+  <ul><li style=''><a href="#entrytype">Entry Types</a></li><li style=''><a href="#searchby">Search Fields</a></li><li style=''><a href="#sections">Sections</a></li><li style=''><a href="#macros">Macros</a></li><li style=''><a href="#import">Bulk Import</a></li></ul>
+<p style='text-indent: 24px'>User entries can be one of multiple entry types, which can be changed at any time by an administrator:</p>
+
+				<a href='#top' name='entrytype'><div style='padding-top: 10px; font-size: 14px; font-weight: bold'>Entry Types</div></a>
+				<ul>
+				<li style=''><b>Address Book Entry</b>: Contains general information, contact information, employment information, and password (for logging in to DM as that user).
+				<li style=''><b>UNIX Entry</b>: Contains all the information of an address book entry, as well as UNIX user account information, and mailing list information, suitable for use as UNIX accounts (as integrated with NSS/PAM of a UNIX system).
+				<li style=''><b>Samba 2 Entry</b>: Contains Address Book and UNIX information, as well as account information for use with a Samba 2 server. Account information will, as much as possible, automatically determine samba schema attributes from the other related attributes.
+				<li style=''><b>Samba 3 Entry</b>: Contains Address Book/UNIX information as well as account information for use with a Samba 3 server.
+				<li style=''><b>Samba 3 + Samba 2 Compat</b>: Like a Samba 3 entry, but also includes the Samba 2 schema so an entry can function with either a Samba 3 OR Samba 2 server.
+				</li></li></li></li></li></ul>
+
+				<a href='#top' name='searchby'><div style='padding-top: 10px; font-size: 14px; font-weight: bold'>Search Fields</div></a>
+<p style='text-indent: 24px'>You can search for a user by any of the following fields:</p>
+
+				<ul>
+				<li style=''>Full Name
+				<li style=''>First Name
+				<li style=''>Last Name
+				<li style=''>Email
+				<li style=''>Username
+				<li style=''>Department
+				<li style=''>Company
+				<li style=''>Location
+				</li></li></li></li></li></li></li></li></ul>
+
+			<a href='#top' name='sections'><div style='padding-top: 10px; font-size: 14px; font-weight: bold'>Sections</div></a>
+<p style='text-indent: 24px'>The following sections document each field available for changing (as well as their possible mandatory specification):</p>
+
+
+			<li style=''>General Information:
+				<ul>
+				<li style=''>Full Name (Required)
+				<li style=''>Photo: A JPEG or GIF photo can be uploaded into LDAP, and will be displayed on the view/edit page, when available.
+				<li style=''>Email: A list of emails that a user has. This can contain both emails for local organization's email server, aliases, as well as other emails that the user is generally available by.
+				<li style=''>Web Page: A list of web pages the user has available for viewing.
+				</li></li></li></li></ul>
+
+				<div style='padding: 5px' align=center><a href='../images/edit_user_general.png' target='_new'><img src='../images/thumbs/edit_user_general.png'></a></div>
+			</li>
+			<li style=''>Contact Information:
+				<ul>
+				<li style=''>Work Address
+				<li style=''>Location: Where this person works, is, etc...
+				<li style=''>Phone Number
+				<li style=''>Mobile (Cell) Phone Number
+				<li style=''>Fax Number
+				<li style=''>Pager Number
+				</li></li></li></li></li></li></ul>
+				<div style='padding: 5px' align=center><a href='../images/edit_user_contact.png' target='_new'><img src='../images/thumbs/edit_user_contact.png'></a></div>
+			</li>
+			<li style=''>Employment Information:
+				<ul>
+				<li style=''>Company
+				<li style=''>Department
+				<li style=''>Title
+				<li style=''>Manager: Displays in the form of an LDAP DN, but can be entered also in the form of a full name or username
+				</li></li></li></li></ul>
+				<div style='padding: 5px' align=center><a href='../images/edit_user_employment.png' target='_new'><img src='../images/thumbs/edit_user_employment.png'></a></div>
+			</li>
+			<li style=''>UNIX Account Information (if a UNIX/Samba entry):
+				<ul>
+				<li style=''>Username: i.e., their login name (Required)
+				<li style=''>User ID# (Required): An 'Auto-Generate' button is provided to generate a new value based upon what is available.
+				<li style=''>Primary Group (Required): Either the Group ID# or group name
+				<li style=''>Other Groups: Auxiliary groups for a user. Depending on cross-referencing settings, this may or may not display a current list
+				<li style=''>UNIX Home Directory (Required): Specifying the 'Create Home Directory' checkbox (which need not be checked) will ensure that the home directory exists on the (home directory) server. See <a href="../overview/index.html#homedir">Home Directory Overview</a> for more details.
+				<li style=''>UNIX Shell: Can enter in /bin/false, etc to disable logging in
+				</li></li></li></li></li></li></ul>
+				<div style='padding: 5px' align=center><a href='../images/edit_user_unix.png' target='_new'><img src='../images/thumbs/edit_user_unix.png'></a></div>
+			</li>
+			<li style=''>Mailing Lists (if a UNIX/Samba entry):
+				<ul>
+				<li style=''>Depending on cross-referencing settings, this may or may not show a list of current lists.
+				</li></ul>
+				<div style='padding: 5px' align=center><a href='../images/edit_user_mail.png' target='_new'><img src='../images/thumbs/edit_user_mail.png'></a></div>
+			</li>
+			<li style=''>Windows (Samba) Account Information (if a Samba 3/2 entry):
+				<ul>
+				<li style=''>Windows Account Flags
+				<li style=''>Allowed Workstations: An empty list means no restrictions
+				<li style=''>Windows Home Drive
+				<li style=''>Windows Home Path
+				<li style=''>Windows Profile Path
+				<li style=''>Windows Logon Script
+				</li></li></li></li></li></li></ul>
+				<div style='padding: 5px' align=center><a href='../images/edit_user_samba.png' target='_new'><img src='../images/thumbs/edit_user_samba.png'></a></div>
+			</li>
+			<li style=''>Password:
+				<ul>
+				<li style=''>Password: Must be entered in twice. When switching to a Samba user from an Address Book/UNIX user, the password MUST be re-entered (or reset) to enable logging into Windows. The password can be randomly generated by the 'Randomly Generate' checkbox, in which case, the password will be displayed after saving to the directory.
+				<li style=''>Lock/Disable Account: Denies logins by putting a '!' in front of the UNIX/Samba passwords.
+				</li></li></ul>
+				<div style='padding: 5px' align=center><a href='../images/edit_user_password.png' target='_new'><img src='../images/thumbs/edit_user_password.png'></a></div>
+			</li>
+
+			<a href='#top' name='macros'><div style='padding-top: 10px; font-size: 14px; font-weight: bold'>Macros</div></a>
+<p style='text-indent: 32px'>The following macros are available within the 'User' module:</p>
+
+				<ul>
+				<li style=''><b>${uidNum}</b>: The next available user ID# in the system
+				<li style=''><b>${FN}</b>: First name, all letters capitalized
+				<li style=''><b>${fn}</b>: First name, all letters lowercased
+				<li style=''><b>${Fn}</b>: First name, first letter capitalized, other letters lowercased
+				<li style=''><b>${Fi}</b>: First (name) initial, capitalized
+				<li style=''><b>${fi}</b>: First (name) initial, lowercased
+				<li style=''><b>${Ln}</b>: Last name, first letter capitalized, other letters lowercased
+				<li style=''><b>${LN}</b>: Last name, all letters capitalized
+				<li style=''><b>${ln}</b>: Last name, all letters lowercased
+				<li style=''><b>${li}</b>: Last (name) initial, lowercased
+				<li style=''><b>${Li}</b>: Last (name) initial, capitalized
+				<li style=''><b>${company_domain}</b>: The email domain of the user's company, as defined in the domain map within the administrative menu
+				</li></li></li></li></li></li></li></li></li></li></li></li></ul>
+
+			<a href='#top' name='import'><div style='padding-top: 10px; font-size: 14px; font-weight: bold'>Bulk Import</div></a>
+<p style='text-indent: 32px'>The User Bulk Import page has the following pre-defined file formats:</p>
+
+				<ul>
+				<li style=''>/etc/passwd (without password, i.e. 'x' placeholder)
+				<li style=''>/etc/passwd (with password)
+				<li style=''>/etc/shadow
+				<li style=''>/etc/smbpasswd: Note: Entries must exist prior (i.e. from /etc/passwd)
+				<li style=''>You can, of course, specify raw LDIF, or a text file given a specified delimiter and whether or not columns are in the file or given via the form.
+				</li></li></li></li></li></ul>
+
+	
+
+  <p align="center">Copyright &copy; 2004-2005 <a href="http://www.malysoft.com/">Maly Soft</a></p>
+</body>
+</html>

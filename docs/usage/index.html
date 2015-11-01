@@ -1,0 +1,162 @@
+<html>
+<head>
+  
+  <title>Directory Manager 2.0 Documentation: User's Guide</title>
+  <link href="../style.css" rel="stylesheet" type="text/css"></link>
+</head>
+<body>
+  <p> 
+	Navigation:
+	<a href="../" name="top">Top</a> | <a href="../">Up</a> | <a href="Javascript:history.go(-1)">Back</a>
+  </p>
+
+  <p align="center" style="font-size: 20px; font-weight: bold">Directory Manager 2.0 Documentation: User's Guide</p>
+  <div style="padding-top: 10px; padding-left: 20px"><null><ul><li style=''><a href="#home">Home Page</a></li><li style=''><a href="#login">Logging In</a></li><li style=''><a href="#browse">Browsing Entries</a></li><li style=''><a href="#search">Searching Entries</a></li><li style=''><a href="#searchresults">Search Results</a></li><li style=''><a href="#advancedsearch">Advanced Search</a></li><li style=''><a href="#view">Viewing Entries</a></li><li style=''><a href="#edit">Editing Entries</a></li><li style=''><a href="#sections">Entry Sections</a></li><li style=''><a href="#crossref">Cross-referenced entries</a></li></ul>
+
+		<a href='#top' name='home'><div style='padding-top: 10px; font-size: 14px; font-weight: bold'>Home Page</div></a>
+<p style='text-indent: 16px'>Once you open the URL for Directory Manager in your browser, you will reach a home page that will redirect you to the user interface. As the Systems Administrator configuring Directory Manager, you can do so by clicking on 'Administration' to go to the configuration tool.</p>
+
+
+		<div style='padding: 5px' align=center><a href='../images/home_page.png' target='_new'><img src='../images/thumbs/home_page.png'></a></div>
+<p style='text-indent: 16px'>One or more directories are managed through a single graphical interface. Usage can be provided both anonymously (for address-book style searching), as well as authenticated (for modifying entries, including your own corresponding user entry).</p>
+
+
+		<a href='#top' name='login'><div style='padding-top: 10px; font-size: 14px; font-weight: bold'>Logging In</div></a>
+<p style='text-indent: 16px'>Whether or not you are forced to log in (or can browse anonymously) depends upon configuration settings. If the Login page is not automatically displayed, you can click on 'Login' to then log in as a particular user with special rights.</p>
+
+<p style='text-indent: 16px'>The login page lets you log in either by a username or an LDAP DN (usually in the form of 'uid=user,ou=People,dc=domain,dc=com'). If logging in as a user, you must specify which tree the account is in. IF you log in using an LDAP DN, the 'Tree' drop-down list will be ignored.</p>
+
+<p style='text-indent: 16px'>You can use Directory Manager anonymously, without logging in, by selecting the desired tree and clicking on 'Anonymous Login'. This will only work if anonymous usage is enabled on the specific tree.</p>
+
+
+		<div style='padding: 5px' align=center><a href='../images/login_page.png' target='_new'><img src='../images/thumbs/login_page.png'></a></div>
+<p style='text-indent: 16px'>Once logged in (by clicking on 'Login', if not enforced), your name and access level (if applicable) will show up in the top-left portion of the screen. Clicking on your name will let you change your account/entry information (unless you log in as a Root DN, in which there is no entry within LDAP to modify):</p>
+
+		<div style='padding: 5px' align=center><a href='../images/login_info.png' target='_new'><img src='../images/thumbs/login_info.png'></a></div>
+<p style='text-indent: 16px'>A drop-down list provides switching between directory trees:</p>
+
+		<div style='padding: 5px' align=center><a href='../images/tree_switch.png' target='_new'><img src='../images/thumbs/tree_switch.png'></a></div>
+		
+		A tab-oriented menu provides switching between different types of entries. Which tabs are available depends on configuration settings, and is customizable per tree.
+		<div style='padding: 5px' align=center><a href='../images/tab_switch.png' target='_new'><img src='../images/thumbs/tab_switch.png'></a></div>
+<p style='text-indent: 16px'>Currently, the following entry types are supported:</p>
+
+			<ul>
+			<li style=''><b>Users</b>: UNIX users, Samba users, or standard address book users (can be mixed), including personal, employment and contact information (phone, email and postal address).
+			<li style=''><b>Groups</b>: UNIX groups, Samba groups
+			<li style=''><b>Mailing Lists</b>: SMTP mailing lists and aliases
+			<li style=''><b>Locations</b>: Office/Room/Building information
+			<li style=''><b>Access Groups</b>: Internal access lists to determine administrative access for Directory Manager
+			</li></li></li></li></li></ul>
+<p style='text-indent: 16px'>Within each tab, there are several navigational links, depending on your level of access, including:</p>
+
+			<ul>
+			<li style=''><b>Browse</b>: List all entries
+			<li style=''><b>Search</b>: Find specific entries (to view or edit) based upon given criteria
+			<li style=''><b>Requests</b>: View the queue of pending entry requests
+			<li style=''><b>Import</b>: Import a file containing entries from an external database (/etc/passwd, XLS, etc)
+			<li style=''><b>Add</b>: Add new entries to the tree
+			</li></li></li></li></li></ul>
+
+		<div style='padding: 5px' align=center><a href='../images/nav.png' target='_new'><img src='../images/thumbs/nav.png'></a></div>
+
+		<a href='#top' name='browse'><div style='padding-top: 10px; font-size: 14px; font-weight: bold'>Browsing Entries</div></a>
+<p style='text-indent: 24px'>By clicking on 'Browse', all entries in the tree for the given entry type will be displayed. Large directories will take a while to load. You can sort based upon a particular column by clicking on the field name.</p>
+
+			<div style='padding: 5px' align=center><a href='../images/browse_link.png' target='_new'><img src='../images/thumbs/browse_link.png'></a></div>
+
+		<a href='#top' name='search'><div style='padding-top: 10px; font-size: 14px; font-weight: bold'>Searching Entries</div></a>
+<p style='text-indent: 24px'>By clicking on the 'Search' link, you will be presented with a search form.</p>
+
+			<div style='padding: 5px' align=center><a href='../images/search_form_link.png' target='_new'><img src='../images/thumbs/search_form_link.png'></a></div>
+<p style='text-indent: 24px'>This form allows you to specify a specific attribute within the entry to match. It also allows you to perform approximate matching by providing a drop-down list specifying how to match the attribute (i.e. 'contains', 'is', 'starts with', 'ends with'). You can then specify how many results to show per page, or 'All' for no paging.</p>
+
+<p style='text-indent: 24px'>You can click on 'Search' to go to the results page, or click on "I'm Feeling Lucky" to AUTOMATICALLY view (the details of) the first entry found (for example, if you know that there is only one entry given the criteria you enter).</p>
+
+
+		<a href='#top' name='searchresults'><div style='padding-top: 10px; font-size: 14px; font-weight: bold'>Search Results</div></a>
+<p style='text-indent: 24px'>Search results display a short summary of the entries, giving commonly sought information. More details are available by going to the 'view' page for an entry, by clicking on the entry's name.</p>
+
+<p style='text-indent: 24px'>Search results are 'paged', meaning that only a certain number of entries display per page. Depending on configuration settings, paging can occur in two ways:</p>
+
+			
+			Results can be divided alphabetically, with a single page per letter. There is an alphabetical navigation at the top of the page to switch between letters, or to specify 'All':
+			<div style='padding: 5px' align=center><a href='../images/search_page_results_alphabetical.png' target='_new'><img src='../images/thumbs/search_page_results_alphabetical.png'></a></div>
+			
+			Results may also be divided by a limit of entries per page. There will be a navigational list to allow moving between pages at the bottom of the screen:
+			<div style='padding: 5px' align=center><a href='../images/search_page_results.png' target='_new'><img src='../images/thumbs/search_page_results.png'></a></div>
+
+		<a href='#top' name='advancedsearch'><div style='padding-top: 10px; font-size: 14px; font-weight: bold'>Advanced Search</div></a>
+			Within the Search screen is a link to perform an advanced search. Clicking on 'Advanced Search' presents you with a larger menu of options. Clicking back on 'Simple Search' takes you to the original page.
+			<div style='padding: 5px' align=center><a href='../images/advanced_search_form.png' target='_new'><img src='../images/thumbs/advanced_search_form.png'></a></div>
+<p style='text-indent: 24px'>From the advanced search page, you can specify searching for records based upon a list of possible matches for a given field. For example, searching for all entries whose username is either 'jdoe', 'mstevens', or 'wrichards'. Simply click on 'Add'/'Remove' to alter this list.</p>
+
+<p style='text-indent: 24px'>You can also enter in an LDAP filter (RFC 2254) to search by. Clicking on the 'LDAP Filter' link will take you to the online reference.</p>
+
+
+			<!-- 
+			You then have the opportunity to customize the output, by specifying which columns to show. You can click on 'Default' to reset this back to how it was originally.
+			 -->
+<p style='text-indent: 24px'>Finally, you can export the results into an Excel CSV file for external use, by clicking on 'Export to Excel/CSV'.</p>
+
+
+		<a href='#top' name='view'><div style='padding-top: 10px; font-size: 14px; font-weight: bold'>Viewing Entries</div></a>
+<p style='text-indent: 24px'>By clicking on the name for an entry from the Browse or Search pages (assuming the 'Implicit Edit' configuration option is disabled), you are presented with a more detailed record of an entry. There will also be a navigational link to switch to 'Edit' mode (and back) of an entry if you have such access.</p>
+
+			<div style='font-weight: bold' align=center>View Link from Search Page:</div>
+<div style='padding: 5px' align=center><a href='../images/view_click_from_search.png' target='_new'><img src='../images/thumbs/view_click_from_search.png'></a></div>
+			<div style='font-weight: bold' align=center>View Link from Edit Page:</div>
+<div style='padding: 5px' align=center><a href='../images/view_click_from_edit.png' target='_new'><img src='../images/thumbs/view_click_from_edit.png'></a></div>
+			<div style='font-weight: bold' align=center>View Page:</div>
+<div style='padding: 5px' align=center><a href='../images/view.png' target='_new'><img src='../images/thumbs/view.png'></a></div>
+<p style='text-indent: 24px'>Items are subdivided within sections, which can be shown or hidden (for viewability) by clicking on the corresponding checkbox.</p>
+
+<p style='text-indent: 24px'>The information provided is based upon one's level of access. As an administrator, you see relevent internal information for systems use that is otherwise irrelevent for common users (i.e. UNIX/Samba account information). As a common user, you only see information relevent to you, such as a person's contact information.</p>
+
+
+		<a href='#top' name='edit'><div style='padding-top: 10px; font-size: 14px; font-weight: bold'>Editing Entries</div></a>
+<p style='text-indent: 24px'>Accessing the 'Edit' page of an entry (to modify it's information) is done through several ways.</p>
+
+<p style='text-indent: 24px'>While viewing an entry, you can click on the 'Edit' link to reach the Edit page.</p>
+
+			
+			<div style='font-weight: bold' align=center>Edit Link from View Page:</div>
+<div style='padding: 5px' align=center><a href='../images/edit_click_from_view.png' target='_new'><img src='../images/thumbs/edit_click_from_view.png'></a></div>
+<p style='text-indent: 24px'>If you are an administrator or moderator, Directory Manager can be configured (via the 'Implicit Edit' option) to automatically send you to the 'Edit' page from the 'Search' page.</p>
+
+			<div style='font-weight: bold' align=center>Edit Link from Search Page:</div>
+<div style='padding: 5px' align=center><a href='../images/view_click_from_search.png' target='_new'><img src='../images/thumbs/view_click_from_search.png'></a></div>
+<p style='text-indent: 24px'>Finally, if you want to change your own information for your user entry (such as contact/personal information or password), you can log in and click on your name at the top of the screen.</p>
+
+
+			<div style='font-weight: bold' align=center>Edit Self Link:</div>
+<div style='padding: 5px' align=center><a href='../images/edit_self_click.png' target='_new'><img src='../images/thumbs/edit_self_click.png'></a></div>
+<p style='text-indent: 24px'>Once there, the 'Edit' page allows modification of the entry to the extent of your access levels. You can then click on the 'View' link to go back to viewing the entry.</p>
+
+
+			<div style='font-weight: bold' align=center>Edit Page:</div>
+<div style='padding: 5px' align=center><a href='../images/edit.png' target='_new'><img src='../images/thumbs/edit.png'></a></div>
+
+		<a href='#top' name='sections'><div style='padding-top: 10px; font-size: 14px; font-weight: bold'>Entry Sections</div></a>
+<p style='text-indent: 24px'>Entries contain data in relevent sections such as 'Contact Information' and 'UNIX Account'. Each section contains a checkbox next to the name that allows for quickly hiding the respective content. This allows you to get rid of the data you don't want to see, and see the data you want.</p>
+
+
+			<div style='font-weight: bold' align=center>Entry Sections:</div>
+<div style='padding: 5px' align=center><a href='../images/entry_sections.png' target='_new'><img src='../images/thumbs/entry_sections.png'></a></div>
+
+		<a href='#top' name='crossref'><div style='padding-top: 10px; font-size: 14px; font-weight: bold'>Cross-referenced entries</div></a>
+<p style='text-indent: 24px'>Depending on system configuration, an entry may provide inline displaying of related entries (such as the auxiliary groups of a user). If this is enabled (which has performance impacts), viewing an entry will show these cross-referenced entries. You can THEN click on a cross-referenced entry to view IT in a separate window.</p>
+
+			<div style='padding: 5px' align=center><a href='../images/view_crossref_complete.png' target='_new'><img src='../images/thumbs/view_crossref_complete.png'></a></div>
+<p style='text-indent: 24px'>If not enabled (which provides better performance), then you will simply be provided with a 'View' link to open up a search results page of such related entries.</p>
+
+			<div style='font-weight: bold' align=center>Cross-Reference Links:</div>
+<div style='padding: 5px' align=center><a href='../images/view_crossref_partial.png' target='_new'><img src='../images/thumbs/view_crossref_partial.png'></a></div>
+			<div style='font-weight: bold' align=center>Cross-Reference Results:</div>
+<div style='padding: 5px' align=center><a href='../images/view_crossref_search_results.png' target='_new'><img src='../images/thumbs/view_crossref_search_results.png'></a></div>
+
+</null></div>
+
+  <p align="center">Copyright &copy; 2004-2005 <a href="http://www.malysoft.com/">Maly Soft</a></p>
+</body>
+</html>

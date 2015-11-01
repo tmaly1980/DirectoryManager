@@ -1,0 +1,36 @@
+<table border=0 cellpadding=1 cellspacing=0 width="100%" style="padding-top: 20px">
+  <tr>
+    <th colspan=1 align=left style="font-size: 16px">
+      Field Requirements
+      <a href="Javascript:void(0)" onClick="helpPopup('config/modules_fieldreq.html');">(HELP)</a>
+    </th>
+    <th align=right>
+      &nbsp;
+      <maly-if var="TREE" ne="_GLOBAL"><input type=checkbox name="INHERIT_REQUIRED" value=1> Inherit</maly-if>
+    </th>
+  </tr>
+
+  <tr>
+    <td align=left valign=middle width="40%">
+      <select style="width: 100%" multiple=multiple size=6 name="REQUIRED" id="REQUIRED" onChange="return multiList_edit('REQUIRED');">
+        <maly-loop var="CONF{MODULES}{#MODULE#}{REQUIRED}" name="ATTR">
+          <option value="#ATTR#">#ATTR#</option>
+        </maly-loop>
+      </select>
+    </td>
+    <td align=left valign=middle class="required">
+      The following fields are AUTOMATICALLY required:<br>
+      <maly-loop var="MODULES{#MODULE#}{REQUIRED}#" name="ATTR">
+        #ATTR#<br>
+      </maly-loop>
+    </td>
+  </tr>
+  <tr>
+    <td align=left>
+      <a href="Javascript:void(0)" onClick="multiList_prompt_add('REQUIRED'); loseInherit('REQUIRED');">Add</a> |
+      <a href="Javascript:void(0)" onClick="multiList_prompt_replace('REQUIRED'); loseInherit('REQUIRED');">Replace</a> |
+      <a href="Javascript:void(0)" onClick="multiList_remove('REQUIRED'); loseInherit('REQUIRED');">Remove</a>
+    </td>
+  </tr>
+</table>
+<br>

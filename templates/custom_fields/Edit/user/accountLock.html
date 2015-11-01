@@ -1,0 +1,9 @@
+<maly-if var="HAS_ADMIN_ACCESS">
+  <input name="accountLock" id="accountLock" type='checkbox' value='1'>Locked
+<maly-else/>
+  <maly-if var="ENTRY{ACCOUNTLOCK}">
+    IS Locked
+  <maly-else/>
+    NOT Locked
+  </maly-if>
+</maly-if>

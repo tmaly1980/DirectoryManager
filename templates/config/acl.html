@@ -1,0 +1,124 @@
+<maly-set var="CUSTOM_ONLOAD">
+  set_field(f.AUTH_TREE, '#CONF{AUTH_TREE}#');
+
+</maly-set>
+<maly-set var="CUSTOM_SUBMIT">
+
+</maly-set>
+<maly-set var="CUSTOM_STYLE">
+
+</maly-set>
+<maly-set var="CONTENT">
+
+ <div align=right> <a href="Javascript:void(0)" onClick="helpPopup('config/index.html#acl');">HELP</a> </div>
+
+ <maly-if var="FORM{PROFILE_ADDED}">
+   <div class="alert">Now that you've created your profile, use the 'Click Here' link below to add any Access Groups that don't exist yet, and to add the desired members to the Access Group.
+   </div>
+ </maly-if>
+
+
+<maly-if not=1 var="TREENAMES">
+  <div class="alert">
+    You do not have any trees available. Please create a directory tree to contain the access control groups, via the 'Directory Trees' menu.
+  </div>
+<maly-elsif not=1 var="CONF{AUTH_TREE}"/>
+  <div class="alert">
+    You do not currently have a designated Authentication Tree. Please selet a directory tree to contain the access control groups, below.
+  </div>
+<maly-elsif not=1 var="TREES{#CONF{AUTH_TREE}#}"/>
+  <div class="alert">
+    The current Authentication Tree is not configured within Directory Manager. Please create a directory tree to contain the access control groups, via the 'Directory Trees' menu .
+  </div>
+<maly-elsif not=1 var="TREES{#CONF{AUTH_TREE}#}{INITIALIZED}"/>
+  <div class="alert">
+    The current Authentication Tree is not presently initialized with the proper tree structure. Please initialize the directory tree containing the access control groups, via the 'Directory Trees' menu.
+  </div>
+<maly-elsif eval="'#CONF{DMACL_SYNC}#' ne '1' and '#CONF{ACCESS_CONTROL}#'"/>
+  <div class="alert">
+    Your DMACL.conf file is OUT-OF-SYNC! Please click on the 'Generate Access Control File' button and redistribute to all managed OpenLDAP servers. Also make sure that your Authentication Tree is replicated to every server!
+  </div>
+ </maly-if>
+
+
+  <table cellspacing=0 cellpadding=3  class="config" align=center>
+    <tr class="config">
+      <th class="config">Authentication Server Tree</th>
+      <td class="config">
+        <select name="AUTH_TREE">
+	  <maly-loop var="TREENAMES" name=TREENAME>
+	    <option value="#TREENAME#">#TREES{#TREENAME#}{NAME}#</option>
+	  </maly-loop>
+	</select>
+      </td>
+    </tr>
+
+    <maly-if var="TREES{#CONF{AUTH_TREE}#}">
+    <tr>
+      <th>Generate Access Control File</th>
+      <td>
+        <maly-if not=1 var="CONF{ACCESS_CONTROL}">
+	  <span class="important">Please create a Profile via the 'Add Profile' link to enable the 'Generate Access Control File' button.
+	  </span>
+	<maly-else/>
+        <input type=submit name=action value="Generate Access Control File">
+	</maly-if>
+      </td>
+    </tr>
+    </maly-if>
+  </table>
+
+  <maly-if var="TREES{#CONF{AUTH_TREE}#}{INITIALIZED}">
+  <br>
+        <table border=0 cellspacing=0 cellpadding=3 class="config" width="75%" align=center>
+	  <tr class="header">
+	    <th valign=top align=left>Profile</th>
+	    <th valign=top align=right>
+	      <a href="#URL#/profile?add=1">Add Profile</a>
+	    </th>
+	  </tr>
+	  <maly-if var="CONF{ACCESS_CONTROL}">
+	  <maly-loop var="CONF{ACCESS_CONTROL}" hash=1>
+	  <maly-set var="DATACLASS" eval="'#MALYITER#' % 2 == 0 ? 'data1' : 'data2' "/>
+	  <tr class="#DATACLASS#">
+	    <td colspan=2>
+	      <a href="#URL#/profile?profile=#KEY#">
+	        #KEY#
+              </a>
+	    </td>
+	  </tr>
+	  </maly-loop>
+	  <maly-else/>
+  	  <tr>
+	    <td class="data1" colspan=2>
+	      <span class="important">
+	      Please click on 'Add Profile' to add your first profile.
+	      </span>
+	    </td>
+	  </tr>
+	  </maly-if>
+	</table>
+
+	<br>
+
+        <table border=0 cellspacing=0 cellpadding=3 class="config" width="75%" align=center>
+	  <tr class="header">
+	    <th valign=top align=left>Access Groups</th>
+	  </tr>
+	  <tr class="data1">
+	    <td>
+	      <a href="cgi-bin/aclgroup.pl" target="_new">Click Here</a> to edit your Access Groups. 
+	      <br>You MUST log in as the Root DN OR an Administrator (of an existing access profile applied) of the Authentication Tree.
+	      <maly-if var="TREES{#CONF{AUTH_TREE}#}{ROOTDN}">
+	      <br>The Root DN is currently set to: '#TREES{#CONF{AUTH_TREE}#}{ROOTDN}#'
+	      </maly-if>
+	    </td>
+	  </tr>
+	</table>
+
+  </maly-if>
+
+
+</maly-set>
+
+#include main

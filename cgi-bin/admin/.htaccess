@@ -1,0 +1,7 @@
+AuthType Basic
+AuthName 'Administration Menu'
+AuthUserFile "<Directory Manager Root>/etc/admin_password"
+# Uncomment the previous line to the proper location.
+# Make sure that "<Directory Manager Root>" is replaced with the proper location.
+
+require valid-user

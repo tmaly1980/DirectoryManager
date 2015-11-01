@@ -1,0 +1,176 @@
+<maly-set var="MODULES" hash=1>
+user=Users
+group=Groups
+mail=Mail
+location=Locations
+</maly-set>
+
+<maly-set var="CUSTOM_ONLOAD">
+set_radio(f.LICENSE_AUTOALLOCATE, '#CONF{LICENSE_AUTOALLOCATE}#', '1');
+calculate_unallocated();
+
+</maly-set>
+<maly-set var="CUSTOM_SUBMIT">
+</maly-set>
+<maly-set var="CUSTOM_STYLE">
+</maly-set>
+<maly-set var="CUSTOM_SCRIPT">
+  var license = new Array();
+  <maly-loop var="LICENSE" hash=1>license['#KEY#'] = '#VALUE#';
+  </maly-loop>
+
+function get_free(module)
+{
+  var excluding = arguments[1];
+  var total = license[module] || '0';
+  var allocated = 0;
+  <maly-loop var="TREES" hash=1 name="TREEKEY:TREE">
+  <maly-if var="TREEKEY" ne="_GLOBAL">
+    var value = document.editForm['#TREEKEY#_'+module].value;
+    if (!excluding || excluding != '#TREEKEY#')
+    {
+      allocated = parseInt(allocated) + parseInt(value);
+    }
+  </maly-if>
+  </maly-loop>
+  return (total - allocated);
+}
+
+function increment(tree, module)
+{
+  var free = get_free(module);
+  if (free >= 1)
+  {
+    var text = document.editForm[tree+'_'+module];
+    text.value = parseInt(text.value) + parseInt(1);
+    loadUnallocated(module);
+  } else {
+    alert("Sorry, no more licenses free for: "+module);
+    loadUnallocated(module);
+    return false;
+  }
+}
+
+function decrement(tree,module)
+{
+  var text = get_field(tree+"_"+module);
+  if (!text ) { return; }
+  if (text.value > 1)
+  {
+    text.value = parseInt(text.value) - parseInt(1);
+    loadUnallocated(module);
+  } else {
+    loadUnallocated(module);
+    text.value = 0;
+  }
+}
+
+
+function changeLicenseCount(tree,module)
+{
+  return checkDistribution(tree, module);
+}
+
+function loadUnallocated(module)
+{
+  var value = get_free(module);
+  //if (value < 0) { value = 0; }
+  document.editForm["unallocated_"+module].value = value;
+}
+
+
+function checkDistribution(tree, module)
+{
+  var free = get_free(module);
+  if (free < 0)
+  {
+    var max_value = get_free(module, tree);
+    document.editForm[tree+'_'+module].value = max_value;
+    alert("Sorry, you have too many licenses allocated for: "+module +'. Setting to maximum possible.');
+    loadUnallocated(module);
+
+    return false;
+  } else {
+    loadUnallocated(module);
+    return true;
+  }
+}
+
+function calculate_unallocated()
+{
+  <maly-loop var="MODULES" hash=1 name="MODKEY:MODVAL">
+    var total = parseInt(license['#MODKEY#'] || '0');
+    var allocated = 0;
+    <maly-loop var="TREES" hash=1 name="TREEKEY:TREE" where="'#TREEKEY#' ne '_GLOBAL'">
+      allocated = parseInt(allocated) + parseInt(document.editForm['#TREEKEY#_#MODKEY#'].value || '0');
+    </maly-loop>
+    document.editForm["unallocated_#MODKEY#"].value = parseInt(total) - parseInt(allocated);
+    if (parseInt(total) < parseInt(allocated))
+    {
+      alert("You have too many licenses distributed for '#MODVAL#', please redistribute.");
+    }
+  </maly-loop>
+
+}
+</maly-set>
+<maly-set var="CONTENT">
+
+ <div align=right> <a href="Javascript:void(0)" onClick="helpPopup('config/index.html#licensing');">HELP</a> </div>
+
+<table border=1 width="100%">
+  <maly-set var="TOTALSPAN" eval="'#SCALAR:MODULES#'+1"/>
+  <tr>
+    <td colspan="#TOTALSPAN#">
+      Automatically allocate new licenses upon Add:
+      <input type=radio name="LICENSE_AUTOALLOCATE" value=1> Yes
+      <input type=radio name="LICENSE_AUTOALLOCATE" value=0> No
+    </td>
+  </tr>
+  <tr>
+    <th>Module:</th>
+    <maly-loop var="MODULES" hash=1>
+    <th>#VALUE#</th>
+    </maly-loop>
+  </tr>
+  <tr>
+    <th>Total:</th>
+    <maly-loop var="MODULES" hash=1>
+    <th>
+      #SCALAR:LICENSE{#KEY#}#
+    </th>
+    </maly-loop>
+  </tr>
+  <tr>
+    <th>Unallocated:</th>
+    <maly-loop var="MODULES" hash=1>
+    <th valign=middle align=center>
+      <input type=text readonly=readonly size="#DIGITS_1:LICENSE{#KEY#}#" maxlength="#DIGITS_1:LICENSE{#KEY#}#" value="#SCALAR:LICENSE{#KEY#}#" name="unallocated_#KEY#" id="unallocated_#KEY#">
+    </th>
+    </maly-loop>
+  </tr>
+  <maly-loop var="TREES" hash=1 name="TREEKEY:TREE">
+  <maly-if var="TREEKEY" ne="_GLOBAL">
+  <tr>
+    <th>#TREE{NAME}#:</th>
+    <maly-loop var="MODULES" hash=1 name="MODKEY:MODVAL">
+    <td valign=middle align=center>
+      <nobr>
+      <a style="text-decoration: none; font-weight: bold" href="Javascript:void(0)" onClick="return decrement('#TREEKEY#', '#MODKEY#');">-</a>
+
+      <input type=text size="#DIGITS:LICENSE{#MODKEY#}#" maxlength="#DIGITS:LICENSE{#MODKEY#}#" value="#NUM:CONF{LICENSES}{#MODKEY#}{#TREEKEY#}#" name="#TREEKEY#_#MODKEY#" id="#TREEKEY#_#MODKEY#" onChange="return changeLicenseCount('#TREEKEY#', '#MODKEY#');">
+      
+      <a style="text-decoration: none; font-weight: bold" href="Javascript:void(0)" onClick="return increment('#TREEKEY#', '#MODKEY#');">+</a>
+      </nobr>
+      <br>
+    </td>
+    </maly-loop>
+  </tr>
+  </maly-if>
+
+  </maly-loop>
+
+</table>
+
+</maly-set>
+
+#include main
